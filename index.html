@@ -345,12 +345,18 @@
         </main>
     </div>
 
-    <!-- Floating Dice Roller Panel (ลอยและย่อขยายได้) -->
+    <!-- Floating Dice Roller Panel (สี่เหลี่ยมลูกเต๋า) -->
     <div class="dice-roller-panel panel-3d collapsed" id="dice-panel">
         <div class="roller-header" id="dice-panel-header">
-            <h3 id="dice-panel-title">🎲 ทอยเต๋า (ซ่อน)</h3>
-            <button id="btn-clear-log" class="btn-action btn-small" onclick="event.stopPropagation(); clearDiceLog();">ล้าง</button>
+            <!-- ส่วนที่แสดงเมื่อหน้าต่างกางออก -->
+            <div class="header-content" id="dice-header-content">
+                <h3 id="dice-panel-title">🎲 ระบบทอยเต๋า</h3>
+                <button id="btn-clear-log" class="btn-action btn-small" onclick="event.stopPropagation(); clearDiceLog();">ล้าง</button>
+            </div>
+            <!-- ส่วนที่แสดงเมื่อหน้าต่างพับ (ไอคอนสี่เหลี่ยมลูกเต๋า) -->
+            <div class="collapsed-icon" id="dice-collapsed-icon">🎲</div>
         </div>
+        
         <div id="dice-panel-content">
             <div class="dice-settings">
                 <div class="setting-group">
