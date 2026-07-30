@@ -345,9 +345,9 @@
         </main>
     </div>
 
-    <!-- Floating Dice Roller Panel -->
-    <div class="dice-roller-panel panel-3d" id="dice-panel">
-        <div class="roller-header" onclick="toggleDicePanel()">
+    <!-- Floating Dice Roller Panel (ลอยและย่อขยายได้) -->
+    <div class="dice-roller-panel panel-3d collapsed" id="dice-panel">
+        <div class="roller-header" id="dice-panel-header">
             <h3 id="dice-panel-title">🎲 ทอยเต๋า (ซ่อน)</h3>
             <button id="btn-clear-log" class="btn-action btn-small" onclick="event.stopPropagation(); clearDiceLog();">ล้าง</button>
         </div>
@@ -381,6 +381,8 @@
                 <div class="text-muted" style="text-align:center; margin-top:10px;">คลิกที่ค่าสถานะหรืออาวุธเพื่อทอยเต๋า</div>
             </div>
         </div>
+        <!-- ปุ่มดึงย่อขยาย มุมขวาล่าง -->
+        <div class="resize-handle" id="dice-resize-handle"></div>
     </div>
 
     <!-- 3D Dice Overlay -->
@@ -419,9 +421,7 @@
         </div>
     </div>
 
-    <!-- YouTube BGM Container -->
     <div id="yt-bgm-container"></div>
-
     <script src="scriptTWD.js"></script>
 </body>
 </html>
