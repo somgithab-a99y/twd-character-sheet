@@ -35,7 +35,7 @@ body {
 }
 
 /* =========================================
-   3D Panels & Accordion (ย่อ/ขยาย หมวดหมู่)
+   3D Panels & Accordion
 ========================================= */
 .panel-3d {
     background: var(--bg-card); box-shadow: var(--shadow-out);
@@ -54,7 +54,6 @@ body {
 .toggle-icon { font-size: 1.2em; color: var(--text-muted); transition: transform 0.3s ease; }
 .panel-content { padding: 20px; transition: all 0.3s ease; }
 
-/* สถานะพับเก็บของพาเนลทั่วไป */
 .collapsed .panel-content { display: none; }
 .collapsed .toggle-icon { transform: rotate(-90deg); }
 .collapsed .panel-header { border-bottom: none; }
@@ -200,8 +199,24 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 .ammo-input { width: 70px; margin: 0 15px; }
 
 /* =========================================
-   Floating Dice Panel (Drag, Resize & Icon)
+   Floating Dice Panel (Drag, Resize & Close)
 ========================================= */
+
+/* คลาสใหม่ ซ่อนหน้าต่างเต๋าแบบสมบูรณ์ 100% */
+.hidden-panel { display: none !important; }
+
+/* ปุ่มกากบาทปิดหน้าต่าง */
+.btn-close-panel {
+    background: rgba(200, 0, 0, 0.2) !important;
+    border: 1px solid var(--warning-color) !important;
+    color: var(--text-main) !important;
+    padding: 6px 12px !important;
+}
+.btn-close-panel:hover {
+    background: var(--warning-color) !important;
+    color: #fff !important;
+}
+
 .dice-roller-panel {
     position: fixed; bottom: 20px; right: 20px; width: 360px; max-width: 95vw; max-height: 90vh;
     -webkit-backdrop-filter: blur(15px); backdrop-filter: blur(15px); 
@@ -215,7 +230,7 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 .dice-roller-panel.collapsed {
     width: 65px !important; 
     height: 65px !important; 
-    border-radius: 16px !important; /* เป็นสี่เหลี่ยมโค้งมนนิดๆ สวยงาม */
+    border-radius: 16px !important; 
     min-height: 0 !important;
     padding: 0;
     justify-content: center;
@@ -238,7 +253,7 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 /* จัดระเบียบตอนพับเก็บ */
 .dice-roller-panel.collapsed .roller-header {
     padding: 0; height: 100%; border-radius: 16px; border-bottom: none;
-    justify-content: center; background: rgba(0,0,0,0.85); /* เข้มขึ้นเพื่อให้ไอคอนชัด */
+    justify-content: center; background: rgba(0,0,0,0.85);
 }
 .dice-roller-panel.collapsed .header-content { display: none; }
 .dice-roller-panel.collapsed .collapsed-icon { display: block; }
@@ -267,7 +282,6 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 }
 
 /* 3D Dice Overlays */
-.hidden-overlay { display: none !important; }
 #dice-3d-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 99999; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%); }
 .dice-container { display: flex; gap: 50px; perspective: 1000px; }
 .dice-3d-wrapper { position: relative; width: 150px; height: 150px; transform-style: preserve-3d; filter: drop-shadow(0 20px 20px rgba(0,0,0,0.9)); transform: translateZ(0); will-change: transform; }
@@ -275,6 +289,7 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 .dice-result-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -30%); font-size: 3em; font-weight: bold; color: white; text-shadow: 0px 4px 15px rgba(0,0,0,1); opacity: 0; }
 .adv-highlight { color: var(--success-color); text-shadow: 0 0 25px var(--success-color), 0px 4px 15px #000; }
 .dis-highlight { color: var(--warning-color); text-shadow: 0 0 25px var(--warning-color), 0px 4px 15px #000; }
+
 @keyframes tumbling { 0% { transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); } 100% { transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); } }
 @keyframes tumbling-delay { 0% { transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); opacity: 0;} 10% { opacity: 1;} 100% { transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); } }
 @keyframes popNumber { 0% { opacity: 0; transform: translate(-50%, -30%) scale(0.2); } 100% { opacity: 1; transform: translate(-50%, -30%) scale(1); } }
