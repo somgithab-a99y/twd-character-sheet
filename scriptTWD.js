@@ -4,7 +4,26 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzlyJ2ACWlzMI0JhuM5-qi0qwH3soiX-0M6BIjDyY1RKt9h9gSAq_3r9bxwgP00jpKiZg/exec";
 
 // ==========================================
-// 1. ข้อมูลระบบและออบเจ็กต์พื้นฐาน
+// 1. ระบบจัดการแพลตฟอร์ม (Platform Separation)
+// ==========================================
+const PlatformManager = {
+    isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1),
+    isAndroid: /Android/.test(navigator.userAgent),
+    get name() {
+        if (this.isIOS) return 'ios';
+        if (this.isAndroid) return 'android';
+        return 'pc';
+    },
+    init() {
+        // แปะคลาสไว้ที่ Body เพื่อให้ CSS รู้ว่ากำลังรันบนเครื่องอะไร
+        document.body.classList.add('platform-' + this.name);
+        console.log(`Platform Detected: ${this.name.toUpperCase()}`);
+    }
+};
+PlatformManager.init();
+
+// ==========================================
+// 2. ข้อมูลระบบและออบเจ็กต์พื้นฐาน
 // ==========================================
 const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 const skillsData = [
@@ -73,7 +92,7 @@ let currentRace = 'none';
 let currentBg = 'none';
 
 // ==========================================
-// 2. ระบบ UI (หน้าต่างย่อ-ขยาย พับหมวดหมู่ และจดจำการปิดหน้าต่างเต๋า)
+// 3. ระบบ UI ย่อ-ขยาย พับหมวดหมู่ และจดจำ
 // ==========================================
 let allCollapsed = false;
 function togglePanel(panelId) {
@@ -94,7 +113,6 @@ function saveUIState() {
     const state = {};
     panels.forEach(p => { state[p.id] = p.classList.contains('collapsed'); });
     
-    // บันทึกสถานะหน้าต่างลูกเต๋าต่างหาก (พับ / ปิดซ่อน 100%)
     const dp = document.getElementById('dice-panel');
     if (dp) {
         state['dice_collapsed'] = dp.classList.contains('collapsed');
@@ -115,19 +133,15 @@ function loadUIState() {
                     else p.classList.remove('collapsed'); 
                 }
             }
-            // โหลดสถานะหน้าต่างลูกเต๋า
             const dp = document.getElementById('dice-panel');
             if (dp) {
-                if (state['dice_collapsed']) dp.classList.add('collapsed'); 
-                else dp.classList.remove('collapsed');
-                if (state['dice_hidden']) dp.classList.add('hidden-panel'); 
-                else dp.classList.remove('hidden-panel');
+                if (state['dice_collapsed']) dp.classList.add('collapsed'); else dp.classList.remove('collapsed');
+                if (state['dice_hidden']) dp.classList.add('hidden-panel'); else dp.classList.remove('hidden-panel');
             }
         }
     } catch(e) {}
 }
 
-// ฟังก์ชันปิด/เปิด หน้าต่างเต๋า 100%
 function closeDicePanel() {
     document.getElementById('dice-panel').classList.add('hidden-panel');
     saveUIState();
@@ -136,22 +150,21 @@ function closeDicePanel() {
 function showDicePanel() {
     const panel = document.getElementById('dice-panel');
     panel.classList.remove('hidden-panel');
-    panel.classList.remove('collapsed'); // ถ้าเรียกด้วยปุ่มให้กางออกเลย
+    panel.classList.remove('collapsed'); 
     saveUIState();
 }
 
-// ฟังก์ชันบังคับเปิดเมื่อมีการทอยเต๋า
 function openDicePanelAuto() {
     const panel = document.getElementById('dice-panel');
-    panel.classList.remove('hidden-panel'); // ปลดจากการซ่อน
+    panel.classList.remove('hidden-panel'); 
     if (panel.classList.contains('collapsed')) {
-        panel.classList.remove('collapsed'); // ปลดจากการพับเป็นสี่เหลี่ยม
+        panel.classList.remove('collapsed'); 
     }
     saveUIState();
 }
 
 // ==========================================
-// 3. การสร้าง UI (อาวุธ & ทักษะ)
+// 4. การสร้าง UI (อาวุธ & ทักษะ)
 // ==========================================
 function initWeapons() {
     [1, 2, 3].forEach(slotId => {
@@ -181,14 +194,14 @@ skillsData.forEach((skill, index) => {
 });
 
 // ==========================================
-// 4. ระบบคำนวณสเตตัส & สีเลือด & การ์ดรูปภาพ
+// 5. ระบบคำนวณสเตตัส & สีเลือด & การ์ดรูปภาพ
 // ==========================================
 function updateHealthVisuals() {
     const current = parseInt(document.getElementById('current-hp').value) || 0;
     const max = parseInt(document.getElementById('max-hp').value) || 1;
     const container = document.getElementById('health-box-container');
     const percent = (current / max) * 100;
-    container.className = 'health-box'; 
+    container.className = 'health-box panel-3d'; 
     if (current <= 0) container.classList.add('health-dead'); 
     else if (percent >= 70) container.classList.add('health-high'); 
     else if (percent >= 35) container.classList.add('health-med'); 
@@ -303,7 +316,7 @@ function updateCalculations() {
 }
 
 // ====================================================
-// 5. ระบบเซฟข้อมูล (Private Mode) & ซิงก์ (Cloud)
+// 6. ระบบเซฟข้อมูล (Private Mode) & ซิงก์ (Cloud)
 // ====================================================
 const LOCAL_STORAGE_KEY = 'twd_rpg_char_data';
 function saveLocalData() {
@@ -383,7 +396,7 @@ function copyTextToClipboard(text, msg) { if (navigator.clipboard) { navigator.c
 function copyLogEntry(btnElement) { event.stopPropagation(); const textToCopy = btnElement.closest('.log-entry').dataset.copytext; if(textToCopy) copyTextToClipboard(textToCopy, '📋 คัดลอกผลลัพธ์ลงคลิปบอร์ดแล้ว!'); }
 
 // ====================================================
-// 6. ระบบ YouTube BGM พื้นหลัง (Safari/iOS Fix)
+// 7. ระบบ YouTube BGM พื้นหลัง (Safari/iOS Fix)
 // ====================================================
 let isBgmPlaying = false;
 function extractVideoID(url) { const match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); return (match && match[2].length === 11) ? match[2] : null; }
@@ -400,7 +413,7 @@ function toggleBGM() {
 }
 
 // ====================================================
-// 7. ระบบเสียงเต๋าและลูกเต๋า 3D (Audio Context Unlocker)
+// 8. ระบบเสียงเต๋าและลูกเต๋า 3D (Audio Context Unlocker)
 // ====================================================
 let audioCtx = null; let audioUnlocked = false;
 function unlockAudio() {
@@ -445,6 +458,15 @@ function play3DDiceAnimation(rolls, finalIndex, callback) {
         else { r2.classList.add('adv-highlight'); r1.classList.add('dis-highlight'); }
     } else { w2.style.display = 'none'; }
 
+    // Failsafe บังคับปิด Overlay เผื่อ iOS บั๊กค้าง
+    let animationDone = false;
+    const hideOverlay = () => {
+        if(animationDone) return;
+        animationDone = true;
+        overlay.classList.add('hidden-overlay');
+        if(callback) callback();
+    };
+
     void overlay.offsetWidth;
     w1.style.animation = 'tumbling 1.2s cubic-bezier(0.1, 0.8, 0.2, 1) forwards';
     if (rolls.length > 1) w2.style.animation = 'tumbling-delay 1.3s cubic-bezier(0.1, 0.8, 0.2, 1) forwards';
@@ -452,13 +474,16 @@ function play3DDiceAnimation(rolls, finalIndex, callback) {
     setTimeout(() => {
         r1.style.animation = 'popNumber 0.4s ease-out forwards';
         if (rolls.length > 1) { r2.style.animation = 'popNumber 0.4s ease-out forwards'; setTimeout(() => { playDiceSound(); }, 200); }
-        setTimeout(() => { overlay.classList.add('hidden-overlay'); if(callback) callback(); }, 1500);
+        setTimeout(hideOverlay, 1500);
     }, 1100);
+
+    // Failsafe สูงสุด 3 วินาที
+    setTimeout(hideOverlay, 3000);
 }
 
-// ----------------------------------------------------
-// 8. ระบบหน้าต่างทอยเต๋า ลอยได้ & ย่อขยายได้ (Draggable & Resizable)
-// ----------------------------------------------------
+// ====================================================
+// 9. ระบบหน้าต่างทอยเต๋า ลอยได้ & ย่อขยายได้ แยกแพลตฟอร์มชัดเจน
+// ====================================================
 const dicePanel = document.getElementById('dice-panel');
 const diceHeader = document.getElementById('dice-panel-header');
 const diceResize = document.getElementById('dice-resize-handle');
@@ -480,8 +505,13 @@ function startDrag(e) {
     dicePanel.style.left = initialLeft + 'px'; dicePanel.style.top = initialTop + 'px';
     dicePanel.style.bottom = 'auto'; dicePanel.style.right = 'auto'; dicePanel.style.margin = '0';
 
-    document.addEventListener('mousemove', onDrag, { passive: false }); document.addEventListener('touchmove', onDrag, { passive: false });
-    document.addEventListener('mouseup', stopDrag); document.addEventListener('touchend', stopDrag);
+    if(PlatformManager.isPC) {
+        document.addEventListener('mousemove', onDrag, { passive: false });
+        document.addEventListener('mouseup', stopDrag);
+    } else {
+        document.addEventListener('touchmove', onDrag, { passive: false });
+        document.addEventListener('touchend', stopDrag);
+    }
 }
 function onDrag(e) {
     if (!isDragging) return; e.preventDefault(); 
@@ -491,7 +521,6 @@ function onDrag(e) {
     if (Math.abs(dx) > 3 || Math.abs(dy) > 3) panelWasDragged = true;
 
     let newLeft = initialLeft + dx; let newTop = initialTop + dy;
-    // ป้องกันหน้าต่างหลุดขอบจอ 
     newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - dicePanel.offsetWidth));
     newTop = Math.max(0, Math.min(newTop, window.innerHeight - dicePanel.offsetHeight));
     dicePanel.style.left = newLeft + 'px'; dicePanel.style.top = newTop + 'px';
@@ -502,8 +531,9 @@ function stopDrag() {
     document.removeEventListener('mouseup', stopDrag); document.removeEventListener('touchend', stopDrag);
 }
 
-// --- ย่อขยายหน้าต่าง (Resize) ---
+// --- ย่อขยายหน้าต่าง (Resize) เฉพาะ PC ---
 function startResize(e) {
+    if(!PlatformManager.isPC) return; // ล็อคระบบ Resize สำหรับมือถือ
     isResizing = true; e.preventDefault(); e.stopPropagation();
     const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
     const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
@@ -514,8 +544,8 @@ function startResize(e) {
     dicePanel.style.left = rect.left + 'px'; dicePanel.style.top = rect.top + 'px';
     dicePanel.style.bottom = 'auto'; dicePanel.style.right = 'auto';
 
-    document.addEventListener('mousemove', onResize, { passive: false }); document.addEventListener('touchmove', onResize, { passive: false });
-    document.addEventListener('mouseup', stopResize); document.addEventListener('touchend', stopResize);
+    document.addEventListener('mousemove', onResize, { passive: false });
+    document.addEventListener('mouseup', stopResize);
 }
 function onResize(e) {
     if (!isResizing) return; e.preventDefault();
@@ -530,12 +560,17 @@ function onResize(e) {
 }
 function stopResize() {
     isResizing = false;
-    document.removeEventListener('mousemove', onResize); document.removeEventListener('touchmove', onResize);
-    document.removeEventListener('mouseup', stopResize); document.removeEventListener('touchend', stopResize);
+    document.removeEventListener('mousemove', onResize);
+    document.removeEventListener('mouseup', stopResize);
 }
 
-diceHeader.addEventListener('mousedown', startDrag); diceHeader.addEventListener('touchstart', startDrag, { passive: false });
-diceResize.addEventListener('mousedown', startResize); diceResize.addEventListener('touchstart', startResize, { passive: false });
+// ผูก Event ตาม Platform
+if (PlatformManager.isPC) {
+    diceHeader.addEventListener('mousedown', startDrag);
+    diceResize.addEventListener('mousedown', startResize);
+} else {
+    diceHeader.addEventListener('touchstart', startDrag, { passive: false });
+}
 
 // กดที่ Header เพื่อพับหรือกางหน้าต่าง
 diceHeader.addEventListener('click', (e) => {
@@ -546,7 +581,7 @@ diceHeader.addEventListener('click', (e) => {
 });
 
 // ====================================================
-// 9. ระบบลอจิกทอยเต๋า และแอคชั่น
+// 10. ระบบลอจิกทอยเต๋า และแอคชั่น
 // ====================================================
 function rollD20(name, modifierStr) {
     openDicePanelAuto(); 
