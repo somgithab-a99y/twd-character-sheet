@@ -73,7 +73,7 @@ let currentRace = 'none';
 let currentBg = 'none';
 
 // ==========================================
-// 2. ระบบ UI (หน้าต่างย่อ-ขยาย พับหมวดหมู่)
+// 2. ระบบ UI (หน้าต่างย่อ-ขยาย พับหมวดหมู่ และจดจำการปิดหน้าต่างเต๋า)
 // ==========================================
 let allCollapsed = false;
 function togglePanel(panelId) {
@@ -88,12 +88,21 @@ function toggleAllPanels() {
     });
     saveUIState();
 }
+
 function saveUIState() {
     const panels = document.querySelectorAll('.collapsible-panel');
     const state = {};
     panels.forEach(p => { state[p.id] = p.classList.contains('collapsed'); });
+    
+    // บันทึกสถานะหน้าต่างลูกเต๋าต่างหาก (พับ / ปิดซ่อน 100%)
+    const dp = document.getElementById('dice-panel');
+    if (dp) {
+        state['dice_collapsed'] = dp.classList.contains('collapsed');
+        state['dice_hidden'] = dp.classList.contains('hidden-panel');
+    }
     localStorage.setItem('twd_rpg_ui_state', JSON.stringify(state));
 }
+
 function loadUIState() {
     try {
         const stateStr = localStorage.getItem('twd_rpg_ui_state');
@@ -101,10 +110,44 @@ function loadUIState() {
             const state = JSON.parse(stateStr);
             for (const [id, isCollapsed] of Object.entries(state)) {
                 const p = document.getElementById(id);
-                if (p) { if (isCollapsed) p.classList.add('collapsed'); else p.classList.remove('collapsed'); }
+                if (p && p.classList.contains('collapsible-panel')) { 
+                    if (isCollapsed) p.classList.add('collapsed'); 
+                    else p.classList.remove('collapsed'); 
+                }
+            }
+            // โหลดสถานะหน้าต่างลูกเต๋า
+            const dp = document.getElementById('dice-panel');
+            if (dp) {
+                if (state['dice_collapsed']) dp.classList.add('collapsed'); 
+                else dp.classList.remove('collapsed');
+                if (state['dice_hidden']) dp.classList.add('hidden-panel'); 
+                else dp.classList.remove('hidden-panel');
             }
         }
     } catch(e) {}
+}
+
+// ฟังก์ชันปิด/เปิด หน้าต่างเต๋า 100%
+function closeDicePanel() {
+    document.getElementById('dice-panel').classList.add('hidden-panel');
+    saveUIState();
+}
+
+function showDicePanel() {
+    const panel = document.getElementById('dice-panel');
+    panel.classList.remove('hidden-panel');
+    panel.classList.remove('collapsed'); // ถ้าเรียกด้วยปุ่มให้กางออกเลย
+    saveUIState();
+}
+
+// ฟังก์ชันบังคับเปิดเมื่อมีการทอยเต๋า
+function openDicePanelAuto() {
+    const panel = document.getElementById('dice-panel');
+    panel.classList.remove('hidden-panel'); // ปลดจากการซ่อน
+    if (panel.classList.contains('collapsed')) {
+        panel.classList.remove('collapsed'); // ปลดจากการพับเป็นสี่เหลี่ยม
+    }
+    saveUIState();
 }
 
 // ==========================================
@@ -425,14 +468,6 @@ let dragStartX, dragStartY, initialLeft, initialTop;
 let resizeStartW, resizeStartH, resizeStartX, resizeStartY;
 let panelWasDragged = false;
 
-// ฟังก์ชันเปิดหน้าต่างเต๋าอัตโนมัติเมื่อกดทอย
-function openDicePanel() {
-    if (dicePanel.classList.contains('collapsed')) {
-        dicePanel.classList.remove('collapsed');
-        saveUIState();
-    }
-}
-
 // --- ลากหน้าต่าง (Drag) ---
 function startDrag(e) {
     if (e.target.closest('button') || e.target.closest('select')) return; 
@@ -456,7 +491,7 @@ function onDrag(e) {
     if (Math.abs(dx) > 3 || Math.abs(dy) > 3) panelWasDragged = true;
 
     let newLeft = initialLeft + dx; let newTop = initialTop + dy;
-    // ป้องกันหน้าต่างหลุดขอบจอ (ปรับ offsetWidth/Height อัตโนมัติแม้ตอนเป็นไอคอน)
+    // ป้องกันหน้าต่างหลุดขอบจอ 
     newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - dicePanel.offsetWidth));
     newTop = Math.max(0, Math.min(newTop, window.innerHeight - dicePanel.offsetHeight));
     dicePanel.style.left = newLeft + 'px'; dicePanel.style.top = newTop + 'px';
@@ -514,7 +549,7 @@ diceHeader.addEventListener('click', (e) => {
 // 9. ระบบลอจิกทอยเต๋า และแอคชั่น
 // ====================================================
 function rollD20(name, modifierStr) {
-    openDicePanel(); 
+    openDicePanelAuto(); 
     const modifier = parseInt(modifierStr) || 0;
     const mode = document.querySelector('input[name="roll_mode"]:checked').value;
     const r1 = Math.floor(Math.random() * 20) + 1; const r2 = Math.floor(Math.random() * 20) + 1;
@@ -539,7 +574,7 @@ function rollD20(name, modifierStr) {
 
 function rollDamage(damageStr, wpnName) {
     if (damageStr === '-') return;
-    openDicePanel();
+    openDicePanelAuto();
     const match = damageStr.match(/(\d+)d(\d+)\s*([+-]\s*\d+)?/i);
     const logEntry = document.createElement('div'); logEntry.className = 'log-entry';
 
@@ -568,7 +603,7 @@ function rollDamage(damageStr, wpnName) {
 }
 
 function logAction(title, message) {
-    openDicePanel();
+    openDicePanelAuto();
     const logEntry = document.createElement('div'); logEntry.className = 'log-entry';
     logEntry.dataset.copytext = `${title}\n${message}`;
     logEntry.innerHTML = `<div class="log-header-row"><div style="font-weight:bold; color:var(--bonus-color);">${title}</div><button class="btn-copy-log" onclick="copyLogEntry(this)">📋</button></div><div style="font-size: 0.9em; margin-top:5px;">${message}</div>`;
