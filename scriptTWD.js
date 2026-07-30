@@ -4,7 +4,7 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzlyJ2ACWlzMI0JhuM5-qi0qwH3soiX-0M6BIjDyY1RKt9h9gSAq_3r9bxwgP00jpKiZg/exec";
 
 // ==========================================
-// 1. ระบบจัดการแพลตฟอร์ม (Platform Separation)
+// 1. ระบบจัดการแพลตฟอร์ม
 // ==========================================
 const PlatformManager = {
     isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1),
@@ -144,7 +144,7 @@ function openDicePanelAuto() {
 }
 
 // ==========================================
-// 4. การสร้าง UI อาวุธ และระบบสุขภาพ
+// 4. การสร้าง UI (อาวุธ & ทักษะ)
 // ==========================================
 function initWeapons() {
     [1, 2, 3].forEach(slotId => {
@@ -162,11 +162,14 @@ skillsData.forEach((skill, index) => {
     const row = document.createElement('div');
     row.className = 'skill-row'; row.id = `skill-row-${index}`;
     if (skill.isSave) row.style.fontWeight = 'bold';
-    row.innerHTML = `<input type="checkbox" id="skill-${index}"><div class="skill-mod clickable-roll" id="skill-mod-${index}" onclick="rollD20('🎯 ${skill.name}', this.textContent)">+0</div><div class="skill-name">${skill.name} <span class="skill-stat">(${skill.stat})</span></div>`;
+    row.innerHTML = `<input type="checkbox" id="skill-${index}"><div class="skill-mod clickable-roll" id="skill-mod-${index}" onclick="rollD20('🎯 ${skill.name}', this.textContent, '${skill.stat}')">+0</div><div class="skill-name">${skill.name} <span class="skill-stat">(${skill.stat})</span></div>`;
     skillsContainer.appendChild(row);
     document.getElementById(`skill-${index}`).addEventListener('change', (e) => { e.target.checked ? proficiencies.add(index) : proficiencies.delete(index); updateCalculations(); autoSync(); });
 });
 
+// ==========================================
+// 5. ระบบคำนวณสเตตัส & สีเลือด & การ์ดรูปภาพ
+// ==========================================
 function updateHealthVisuals() {
     const current = parseInt(document.getElementById('current-hp').value) || 0;
     const max = parseInt(document.getElementById('max-hp').value) || 1;
@@ -250,8 +253,10 @@ function updateCalculations() {
         document.getElementById(`skill-row-${index}`).style.display = (showAll || isProficient) ? 'flex' : 'none';
     });
 
+    // 💥 ซ่อมแซมระบบผูกฟังก์ชันปุ่มโจมตี ATK / DMG
     [1, 2, 3].forEach(slotId => {
-        const wpnKey = document.getElementById(`wpn-select-${slotId}`).value; const wpn = weaponData[wpnKey];
+        const wpnKey = document.getElementById(`wpn-select-${slotId}`).value; 
+        const wpn = weaponData[wpnKey] || weaponData['none']; // ดักบั๊กกันแตก
         const customName = document.getElementById(`wpn-name-${slotId}`).value.trim();
         const displayWpnName = customName ? `${customName} (${wpn.name})` : wpn.name;
 
@@ -267,18 +272,22 @@ function updateCalculations() {
         let dmgModStr = (atkMod !== 0) ? ((atkMod > 0 ? '+' : '') + atkMod) : '';
         let finalDmgStr = wpnKey === 'none' ? `${1 + atkMod} ${wpn.dmgType}` : `${wpn.damage}${dmgModStr} ${wpn.dmgType}`;
         
-        // ผูกฟังก์ชันโจมตีและดาเมจเข้ากับปุ่ม
-        document.getElementById(`wpn-atk-${slotId}`).textContent = atkStr;
-        document.getElementById(`wpn-atk-${slotId}`).onclick = () => rollAttack(displayWpnName, atkStr, ammoType);
-        document.getElementById(`wpn-dmg-${slotId}`).textContent = finalDmgStr;
-        document.getElementById(`wpn-dmg-${slotId}`).onclick = () => rollDamage(finalDmgStr, displayWpnName);
+        const btnAtk = document.getElementById(`wpn-atk-${slotId}`);
+        const btnDmg = document.getElementById(`wpn-dmg-${slotId}`);
+
+        btnAtk.textContent = atkStr;
+        btnAtk.onclick = () => rollAttack(displayWpnName, atkStr, ammoType);
+        
+        btnDmg.textContent = finalDmgStr;
+        btnDmg.onclick = () => rollDamage(finalDmgStr, displayWpnName);
+        
         document.getElementById(`wpn-prop-${slotId}`).textContent = wpn.props;
     });
     updateHealthVisuals(); updateCharacterCard();
 }
 
 // ====================================================
-// 5. ระบบต่อสู้, พักผ่อน และ กระสุน (กู้คืนจากบั๊กที่หายไป)
+// 6. ระบบต่อสู้, พักผ่อน และ กระสุน (กู้คืนมาแล้ว)
 // ====================================================
 function adjAmmo(type, amount) {
     const input = document.getElementById(`ammo-${type}`);
@@ -290,12 +299,16 @@ function rollAttack(name, modStr, ammoType) {
     if (ammoType) {
         const input = document.getElementById(`ammo-${ammoType}`);
         let val = parseInt(input.value) || 0;
-        if (val <= 0) return alert(`กระสุนหมด! โจมตีด้วย ${name} ไม่ได้`);
+        if (val <= 0) {
+            alert(`กระสุนหมด! โจมตีด้วย ${name} ไม่ได้`);
+            return;
+        }
         input.value = val - 1;
         logAction("⚠️ ใช้กระสุน", `ยิง ${name} (เหลือกระสุน ${input.value} นัด)`);
         autoSync();
     }
-    rollD20(`⚔️ โจมตี: ${name}`, modStr);
+    // ส่งสกินคำว่า 'atk' ไปให้ระบบลูกเต๋ารู้
+    rollD20(`⚔️ โจมตี: ${name}`, modStr, 'atk');
 }
 
 function shortRest() { alert("พักสั้น: ใช้ Hit Dice ฟื้น HP ได้"); autoSync(); }
@@ -306,6 +319,7 @@ function longRest() {
 
 function rollDeathSave() {
     const roll = Math.floor(Math.random() * 20) + 1;
+    // ส่งสกิน 'death' ไปให้เต๋า
     play3DDiceAnimation([roll], 20, 0, 'death', () => {
         const logEntry = document.createElement('div'); logEntry.className = 'log-entry';
         let resultText = '', plainText = '';
@@ -338,9 +352,8 @@ function resetDeathSaves() {
     autoSync();
 }
 
-
 // ====================================================
-// 6. ระบบเซฟข้อมูล (Private Mode) & ซิงก์ (Cloud)
+// 7. ระบบเซฟข้อมูล (Private Mode) & ซิงก์ (Cloud)
 // ====================================================
 const LOCAL_STORAGE_KEY = 'twd_rpg_char_data';
 function saveLocalData() {
@@ -420,7 +433,7 @@ function copyTextToClipboard(text, msg) { if (navigator.clipboard) { navigator.c
 function copyLogEntry(btnElement) { event.stopPropagation(); const textToCopy = btnElement.closest('.log-entry').dataset.copytext; if(textToCopy) copyTextToClipboard(textToCopy, '📋 คัดลอกผลลัพธ์ลงคลิปบอร์ดแล้ว!'); }
 
 // ====================================================
-// 7. ระบบ YouTube BGM พื้นหลัง
+// 8. ระบบ YouTube BGM พื้นหลัง
 // ====================================================
 let isBgmPlaying = false;
 function extractVideoID(url) { const match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); return (match && match[2].length === 11) ? match[2] : null; }
@@ -437,7 +450,7 @@ function toggleBGM() {
 }
 
 // ====================================================
-// 8. 🛑 กราฟิกเต๋า และ ระบบทอยเต๋าแบบใหม่ (Dice Skins & iOS GPU Killer)
+// 9. 🛑 กราฟิกเต๋า และ ระบบทำลายเต๋าแก้บั๊กค้าง iOS 100%
 // ====================================================
 let audioCtx = null; let audioUnlocked = false;
 function unlockAudio() {
@@ -467,7 +480,7 @@ function playDiceSound() {
 
 document.getElementById('dice-color-select').addEventListener('change', (e) => { document.documentElement.style.setProperty('--dice-hue', `${e.target.value}deg`); });
 
-// 🟢 สร้างรูปทรงลูกเต๋าอัตโนมัติ (D4 - D20)
+// 🟢 สร้างรูปทรงลูกเต๋า SVG
 function getDiceSvg(sides) {
     if (sides == 4) return `<svg viewBox="0 0 100 100" class="dice-svg"><polygon points="50,10 10,85 90,85" fill="#d00000" stroke="#ff8888" stroke-width="2"/><polygon points="50,10 50,85 10,85" fill="#ff4d4d" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,10 90,85 50,85" fill="#cc0000" stroke="#ff8888" stroke-width="1.5"/></svg>`;
     if (sides == 6) return `<svg viewBox="0 0 100 100" class="dice-svg"><polygon points="50,15 85,35 50,55 15,35" fill="#ff6666" stroke="#ff8888" stroke-width="1.5"/><polygon points="15,35 50,55 50,90 15,70" fill="#cc0000" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,55 85,35 85,70 50,90" fill="#990000" stroke="#ff8888" stroke-width="1.5"/></svg>`;
@@ -478,16 +491,24 @@ function getDiceSvg(sides) {
     return `<svg viewBox="0 0 100 100" class="dice-svg"><polygon points="50,20 15,70 85,70" fill="#b22222" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,0 0,25 50,20" fill="#ff6666" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,0 100,25 50,20" fill="#d00000" stroke="#ff8888" stroke-width="1.5"/><polygon points="0,25 15,70 50,20" fill="#ff4d4d" stroke="#ff8888" stroke-width="1.5"/><polygon points="100,25 85,70 50,20" fill="#cc0000" stroke="#ff8888" stroke-width="1.5"/><polygon points="0,25 0,75 15,70" fill="#e60000" stroke="#ff8888" stroke-width="1.5"/><polygon points="100,25 100,75 85,70" fill="#7a0000" stroke="#ff8888" stroke-width="1.5"/><polygon points="0,75 50,100 15,70" fill="#990000" stroke="#ff8888" stroke-width="1.5"/><polygon points="100,75 50,100 85,70" fill="#550000" stroke="#ff8888" stroke-width="1.5"/><polygon points="15,70 50,100 85,70" fill="#8b0000" stroke="#ff8888" stroke-width="1.5"/></svg>`;
 }
 
-// 🟢 ฟังก์ชันหลัก อนิเมชันลูกเต๋า + สร้างและทำลายทิ้งเพื่อแก้บั๊ก iOS
+// 🟢 ฟังก์ชันหลัก สร้างและทำลายล้าง 100% (The iOS GPU Killer)
 function play3DDiceAnimation(rolls, sides, finalIndex, skinType, callback) {
     playDiceSound(); 
-    const overlay = document.getElementById('dice-3d-overlay');
-    const container = document.getElementById('dice-container');
 
-    // 🛑 1. ทุบลูกเต๋าเก่าทิ้ง 100% ป้องกันบั๊ก iOS ค้าง
-    container.innerHTML = '';
-    
-    // จัดการระบบ "ลายน้ำ" หรือ "สกินลูกเต๋า" (Dice Skins)
+    // 1. ทำลายของเก่าที่อาจจะค้างอยู่ (DOM Nuke)
+    let oldOverlay = document.getElementById('dice-3d-overlay-dynamic');
+    if (oldOverlay) oldOverlay.remove();
+
+    // 2. สร้างฉากและลูกเต๋าขึ้นมาใหม่หมดจากศูนย์
+    const overlay = document.createElement('div');
+    overlay.id = 'dice-3d-overlay-dynamic';
+    overlay.className = 'dice-3d-overlay-fullscreen';
+
+    const container = document.createElement('div');
+    container.className = 'dice-container';
+    overlay.appendChild(container);
+
+    // เลือกลายน้ำ (Skin Emoji)
     let emoji = '';
     if (skinType === 'str') emoji = '💪';
     else if (skinType === 'dex') emoji = '🏃';
@@ -501,70 +522,73 @@ function play3DDiceAnimation(rolls, sides, finalIndex, skinType, callback) {
 
     const watermarkHtml = emoji ? `<div class="dice-watermark">${emoji}</div>` : '';
 
-    // จำกัดให้แสดงสูงสุดแค่ 2 ลูกบนจอเพื่อความสวยงาม
     let visualRolls = rolls.slice(0, 2);
 
-    // 🛑 2. สร้างลูกเต๋าใหม่แบบสดๆ
     visualRolls.forEach((roll, idx) => {
         const wrapper = document.createElement('div');
         wrapper.className = 'dice-3d-wrapper';
-        wrapper.id = `dice-wrapper-${idx}`;
         wrapper.innerHTML = `
             ${getDiceSvg(sides)}
             ${watermarkHtml}
-            <div class="dice-result-text" id="dice-result-${idx}">${roll}</div>
+            <div class="dice-result-text" id="dynamic-dice-result-${idx}">${roll}</div>
         `;
         container.appendChild(wrapper);
     });
 
-    overlay.style.display = 'flex';
-    overlay.classList.remove('hidden-overlay');
+    // ยัดลงไปในหน้าเว็บ
+    document.body.appendChild(overlay);
 
-    // บังคับให้เบราว์เซอร์รีเฟรช 
+    // บังคับให้ iOS วาดหน้าจอใหม่ทันที
     void overlay.offsetWidth;
 
-    // เล่นอนิเมชัน
-    visualRolls.forEach((roll, idx) => {
-        const w = document.getElementById(`dice-wrapper-${idx}`);
-        const r = document.getElementById(`dice-result-${idx}`);
+    const wrappers = overlay.querySelectorAll('.dice-3d-wrapper');
+    const results = overlay.querySelectorAll('.dice-result-text');
 
-        // เน้นสีเขียว/แดง สำหรับ Adv / Dis เฉพาะลูกเต๋า 20 หน้า
+    wrappers.forEach((w, idx) => {
         if (visualRolls.length > 1 && sides === 20) {
-            if (finalIndex === idx) r.classList.add('adv-highlight');
-            else r.classList.add('dis-highlight');
+            if (finalIndex === idx) results[idx].classList.add('adv-highlight');
+            else results[idx].classList.add('dis-highlight');
         }
-
         w.style.animation = `tumbling ${1.2 + (idx * 0.1)}s cubic-bezier(0.1, 0.8, 0.2, 1) forwards`;
         setTimeout(() => {
-            r.style.animation = 'popNumber 0.4s ease-out forwards';
+            results[idx].style.animation = 'popNumber 0.4s ease-out forwards';
             if (idx > 0) setTimeout(() => playDiceSound(), 200); 
         }, 1100 + (idx * 100));
     });
 
-    // 🔴 3. ฟังก์ชันทุบทำลาย (The iOS GPU Killer)
-    let animationDone = false;
-    const hideOverlay = () => {
-        if(animationDone) return;
-        animationDone = true;
+    // 🔴 3. ฟังก์ชันทุบทำลายทิ้ง (ล้าง RAM 100%)
+    let isDestroyed = false;
+    const destroyOverlay = () => {
+        if(isDestroyed) return;
+        isDestroyed = true;
         
-        // ลบ DOM ลูกเต๋าทิ้งทั้งหมดเพื่อให้แรมการ์ดจอ iOS ว่าง
-        container.innerHTML = ''; 
-        overlay.style.display = 'none';
-        overlay.classList.add('hidden-overlay');
+        // เคลียร์การเรนเดอร์ก่อนเพื่อความชัวร์
+        wrappers.forEach(w => {
+            w.style.animation = 'none';
+            w.style.transform = 'none';
+            w.style.display = 'none';
+        });
+
+        // ถอนรากถอนโคนออกจาก HTML
+        overlay.remove();
 
         if(callback) callback();
     };
 
-    // แตะที่จอเพื่อบังคับปิดทันที 
-    overlay.onclick = hideOverlay;
-    overlay.ontouchstart = hideOverlay; 
+    // แตะที่จอเพื่อปิดทันที
+    overlay.addEventListener('click', destroyOverlay);
+    overlay.addEventListener('touchstart', (e) => {
+        e.preventDefault(); 
+        destroyOverlay();
+    }, { passive: false });
 
-    // หน่วงเวลาปิดหน้าจอ
-    setTimeout(hideOverlay, 1500 + (visualRolls.length * 100));
+    // หน่วงเวลาตั้งเวลาลบทิ้งอัตโนมัติ
+    setTimeout(destroyOverlay, 1500 + (visualRolls.length * 100));
+    setTimeout(destroyOverlay, 3500); // Failsafe สูงสุด
 }
 
 // ====================================================
-// 9. ระบบหน้าต่างทอยเต๋า ลอยได้ & ย่อขยายได้
+// 10. ระบบหน้าต่างทอยเต๋า ลอยได้ & ย่อขยายได้
 // ====================================================
 const dicePanel = document.getElementById('dice-panel');
 const diceHeader = document.getElementById('dice-panel-header');
@@ -657,9 +681,9 @@ diceHeader.addEventListener('click', (e) => {
 });
 
 // ====================================================
-// 10. ระบบลอจิกทอยเต๋า สกิน และประวัติ
+// 11. ระบบลอจิกทอยเต๋า สกินอัจฉริยะ และประวัติ
 // ====================================================
-function rollD20(name, modifierStr) {
+function rollD20(name, modifierStr, forcedSkin = null) {
     openDicePanelAuto(); 
     const modifier = parseInt(modifierStr) || 0;
     const mode = document.querySelector('input[name="roll_mode"]:checked').value;
@@ -676,16 +700,17 @@ function rollD20(name, modifierStr) {
 
     const total = finalRoll + modifier;
 
-    // 🌟 ระบบตรวจจับสกินอัจฉริยะจากชื่อที่ทอย
-    let skinType = '';
-    const n = name.toLowerCase();
-    if (n.includes('str') || n.includes('strength') || n.includes('athletics')) skinType = 'str';
-    else if (n.includes('dex') || n.includes('dexterity') || n.includes('acrobatics') || n.includes('sleight') || n.includes('stealth') || n.includes('initiative') || n.includes('เริ่มก่อน')) skinType = 'dex';
-    else if (n.includes('con') || n.includes('constitution')) skinType = 'con';
-    else if (n.includes('int') || n.includes('intelligence') || n.includes('history') || n.includes('investigation') || n.includes('nature')) skinType = 'int';
-    else if (n.includes('wis') || n.includes('wisdom') || n.includes('animal') || n.includes('insight') || n.includes('medicine') || n.includes('perception') || n.includes('survival')) skinType = 'wis';
-    else if (n.includes('cha') || n.includes('charisma') || n.includes('deception') || n.includes('intimidation') || n.includes('persuasion')) skinType = 'cha';
-    else if (n.includes('โจมตี')) skinType = 'atk';
+    // 🌟 ระบบตรวจจับสกินอัจฉริยะจากชื่อที่ทอย หรือจากค่าที่ถูกบังคับส่งมา
+    let skinType = forcedSkin || '';
+    if (!skinType) {
+        const n = name.toLowerCase();
+        if (n.includes('str') || n.includes('strength') || n.includes('athletics')) skinType = 'str';
+        else if (n.includes('dex') || n.includes('dexterity') || n.includes('acrobatics') || n.includes('sleight') || n.includes('stealth') || n.includes('initiative') || n.includes('เริ่มก่อน')) skinType = 'dex';
+        else if (n.includes('con') || n.includes('constitution')) skinType = 'con';
+        else if (n.includes('int') || n.includes('intelligence') || n.includes('history') || n.includes('investigation') || n.includes('nature')) skinType = 'int';
+        else if (n.includes('wis') || n.includes('wisdom') || n.includes('animal') || n.includes('insight') || n.includes('medicine') || n.includes('perception') || n.includes('survival')) skinType = 'wis';
+        else if (n.includes('cha') || n.includes('charisma') || n.includes('deception') || n.includes('intimidation') || n.includes('persuasion')) skinType = 'cha';
+    }
 
     play3DDiceAnimation(rolls, 20, finalIndex, skinType, () => {
         const logEntry = document.createElement('div'); logEntry.className = `log-entry`;
