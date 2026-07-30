@@ -104,7 +104,7 @@ skillsData.forEach((skill, index) => {
 });
 
 // ==========================================
-// 3. ระบบคำนวณสเตตัส & สีเลือดอัจฉริยะ (Dynamic 3D HP)
+// 3. ระบบคำนวณสเตตัส & สีเลือด & การ์ดรูปภาพ
 // ==========================================
 function updateHealthVisuals() {
     const current = parseInt(document.getElementById('current-hp').value) || 0;
@@ -112,20 +112,55 @@ function updateHealthVisuals() {
     const container = document.getElementById('health-box-container');
     const percent = (current / max) * 100;
 
-    container.className = 'health-box 3d-panel'; // รีเซ็ตคลาสกลับไปเป็นค่าเริ่มต้น
-    if (current <= 0) {
-        container.classList.add('health-dead');
-    } else if (percent >= 70) {
-        container.classList.add('health-high');
-    } else if (percent >= 35) {
-        container.classList.add('health-med');
-    } else {
-        container.classList.add('health-low');
-    }
+    container.className = 'health-box panel-3d'; 
+    if (current <= 0) { container.classList.add('health-dead'); } 
+    else if (percent >= 70) { container.classList.add('health-high'); } 
+    else if (percent >= 35) { container.classList.add('health-med'); } 
+    else { container.classList.add('health-low'); }
 }
 
 document.getElementById('current-hp').addEventListener('input', updateHealthVisuals);
 document.getElementById('max-hp').addEventListener('input', updateHealthVisuals);
+
+// ระบบคำนวณภาพการ์ด (Pollinations AI)
+function updateCharacterCard() {
+    const typeObj = document.getElementById('survivor-type');
+    const roleObj = document.getElementById('role');
+    const bgObj = document.getElementById('background');
+
+    // ดึงชื่อภาษาไทยคำแรกมาโชว์
+    const typeText = typeObj.value !== 'none' ? typeObj.options[typeObj.selectedIndex].text.split(' ')[0] : 'ผู้รอดชีวิต';
+    const roleText = roleObj.value !== 'none' ? roleObj.options[roleObj.selectedIndex].text.split(' ')[0] : 'ไร้บทบาท';
+    const bgText = bgObj.value !== 'none' ? bgObj.options[bgObj.selectedIndex].text.split(' ')[0] : 'ไร้ภูมิหลัง';
+
+    const comboTitle = `${typeText} • ${roleText} • ${bgText}`;
+    document.getElementById('char-combo-title').textContent = comboTitle;
+
+    const customUrl = document.getElementById('custom-img-url').value.trim();
+    const imgEl = document.getElementById('char-portrait');
+
+    if (customUrl) {
+        imgEl.src = customUrl; // ถ้าใส่ลิงก์รูปเองก็ให้โชว์รูปนั้น
+    } else {
+        if (typeObj.value === 'none' && roleObj.value === 'none' && bgObj.value === 'none') {
+            imgEl.src = "https://placehold.co/300x400/1a1a1a/ffd700?text=Select+Survivor";
+            return;
+        }
+
+        // หากไม่ได้ใส่รูปเอง ระบบจะเจเนอเรตรูป TWD ให้ตามคอมโบเป๊ะๆ (126 แบบ)
+        const prompt = `A portrait of a post-apocalyptic survivor in The Walking Dead, ${typeObj.value} type, ${roleObj.value} role, ${bgObj.value} background, gritty dark comic style, highly detailed`;
+        const encodedPrompt = encodeURIComponent(prompt);
+        
+        // สร้างรหัส Seed เฉพาะตัว เพื่อให้กลับมาใช้คอมโบเดิมแล้วได้รูปเดิมเสมอ
+        const seedString = typeObj.value + roleObj.value + bgObj.value;
+        let hash = 0;
+        for (let i = 0; i < seedString.length; i++) hash = Math.imul(31, hash) + seedString.charCodeAt(i) | 0;
+        
+        imgEl.src = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=300&height=400&nologo=true&seed=${Math.abs(hash)}`;
+    }
+}
+
+document.getElementById('custom-img-url').addEventListener('input', updateCharacterCard);
 
 function updateCalculations() {
     const level = parseInt(document.getElementById('level').value) || 1;
@@ -222,6 +257,7 @@ function updateCalculations() {
     });
 
     updateHealthVisuals();
+    updateCharacterCard(); // เรียกอัปเดตการ์ดภาพเสมอ
 }
 
 // ====================================================
@@ -271,7 +307,7 @@ function resetLocalData() {
 }
 
 // ====================================================
-// 5. ระบบซิงก์ข้อมูลไป Google Docs (Full Cloud Sync)
+// 5. ระบบซิงก์ข้อมูลไป Google Docs
 // ====================================================
 let syncTimer = null;
 
@@ -287,6 +323,11 @@ function getCharacterDataText() {
 
     let text = `=== THE WALKING DEAD RPG: CHARACTER SHEET ===\n`;
     text += `ชื่อตัวละคร: ${name}\nประเภท: ${type} | บทบาท: ${role} | เลเวล: ${level}\nภูมิหลัง: ${bg}\n`;
+    
+    // ดึง URL ภาพที่ผู้เล่นใช้ (ถ้ามี) ส่งเข้า Docs ด้วย
+    const customImg = document.getElementById('custom-img-url').value;
+    if(customImg) text += `รูปตัวละคร: ${customImg}\n`;
+
     text += `---------------------------------------------\n`;
     
     const currentHp = document.getElementById('current-hp').value;
@@ -294,7 +335,6 @@ function getCharacterDataText() {
     const ac = document.getElementById('ac-display').textContent;
     const speed = document.getElementById('speed').textContent;
     const init = document.getElementById('initiative').textContent;
-    const prof = document.getElementById('prof-bonus').textContent;
 
     text += `[สถานะการต่อสู้]\nHP: ${currentHp} / ${maxHp} | AC: ${ac} | Speed: ${speed} | Initiative: ${init}\n`;
     text += `---------------------------------------------\n`;
@@ -409,7 +449,6 @@ function toggleBGM() {
     } else {
         const videoId = extractVideoID(urlInput);
         if (!videoId) return alert("⚠️ ไม่พบ ID วิดีโอ กรุณาตรวจสอบลิงก์ YouTube อีกครั้ง");
-        // iOS Safari จะยอมให้เล่นเสียงอัตโนมัติก็ต่อเมื่อ iframe มีขนาดและเปิด playsinline
         container.innerHTML = `<iframe width="200" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&playsinline=1" frameborder="0" allow="autoplay; encrypted-media"></iframe>`;
         btn.innerHTML = '⏹️ Stop'; btn.classList.add('btn-bgm-playing');
         isBgmPlaying = true;
@@ -605,7 +644,7 @@ function rollDamage(damageStr, wpnName) {
 document.querySelectorAll('input, select, textarea').forEach(el => {
     el.addEventListener('input', (e) => {
         saveLocalData();
-        if (e.target.id !== 'webapp-url' && e.target.id !== 'bgm-url') {
+        if (e.target.id !== 'webapp-url' && e.target.id !== 'bgm-url' && e.target.id !== 'custom-img-url') {
             autoSync();
         }
     });
