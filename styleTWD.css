@@ -1,12 +1,10 @@
 :root {
-    /* ธีมสีหลัก (Dark Skeuomorphism) */
     --bg-dark: #121214;
     --bg-panel: linear-gradient(145deg, #1e1e22, #171719);
     --bg-card: linear-gradient(145deg, #2a2a30, #222226);
     --text-main: #f0f0f0;
     --text-muted: #a0a0a5;
     
-    /* สัญลักษณ์สีต่างๆ (Neon Accents) */
     --c-str: #ff4d4d; --c-dex: #4caf50; --c-con: #ff9800; 
     --c-int: #2196f3; --c-wis: #9c27b0; --c-cha: #e91e63; 
     
@@ -14,7 +12,6 @@
     --warning-color: #ff4d4d;
     --success-color: #4caf50;
     
-    /* มิติ 3D */
     --shadow-out: 5px 5px 15px #0a0a0b, -3px -3px 10px rgba(255,255,255,0.05);
     --shadow-in: inset 4px 4px 8px #0a0a0b, inset -3px -3px 8px rgba(255,255,255,0.05);
     --border-3d: 1px solid rgba(255,255,255,0.08);
@@ -34,9 +31,7 @@ body {
     overflow: hidden; margin-bottom: 100px; 
 }
 
-/* =========================================
-   3D Panels & Accordion
-========================================= */
+/* 3D Panels & Accordion */
 .panel-3d {
     background: var(--bg-card); box-shadow: var(--shadow-out);
     border-top: var(--border-3d); border-left: var(--border-3d); border-radius: 12px;
@@ -68,9 +63,7 @@ body {
 .btn-red { background: linear-gradient(145deg, #cc0000, #8b0000); }
 .btn-play { background: linear-gradient(145deg, #2a2a30, #1e1e22); color: #4dabf7; border: 1px solid #4dabf7; }
 
-/* =========================================
-   Inputs & Form
-========================================= */
+/* Inputs & Form */
 input[type="text"], input[type="number"], select, textarea {
     background-color: #161619; color: #fff; border: 1px solid #333; box-shadow: var(--shadow-in); 
     padding: 12px; border-radius: 8px; font-family: inherit; font-size: 16px !important; 
@@ -84,9 +77,7 @@ select {
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--bonus-color); box-shadow: inset 2px 2px 5px #0a0a0b, 0 0 8px rgba(255,215,0,0.3); }
 input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !important; }
 
-/* =========================================
-   Header Layout
-========================================= */
+/* Header Layout */
 .sheet-header { 
     background: linear-gradient(180deg, #600000, #300000); padding: 20px; display: flex; flex-wrap: wrap; gap: 15px; 
     border-bottom: 2px solid #ff4d4d; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
@@ -102,9 +93,7 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 .btn-reset-data { background: transparent; border: 1px solid var(--warning-color); color: var(--warning-color); box-shadow: none; }
 .btn-reset-data:hover { background: var(--warning-color); color: #000; }
 
-/* =========================================
-   Main Grid & Portrait System
-========================================= */
+/* Main Grid & Portrait System */
 .sheet-main { display: grid; grid-template-columns: 240px 1.2fr 1.5fr; gap: 20px; padding: 20px; }
 
 .character-card { padding: 12px; text-align: center; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
@@ -113,9 +102,7 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 .card-title-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.95) 70%); padding: 25px 8px 8px; font-size: 0.9em; font-weight: bold; color: var(--bonus-color); text-shadow: 1px 1px 4px #000; }
 #custom-img-url { font-size: 0.85em !important; text-align: center; }
 
-/* =========================================
-   Stats Column (Sub-cards)
-========================================= */
+/* Stats Column */
 .stats-grid { display: flex; flex-direction: column; gap: 15px; }
 .stat-box { 
     background: rgba(0,0,0,0.3); border-radius: 12px; text-align: center; padding: 15px 10px; 
@@ -138,9 +125,7 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 .clickable-roll:active { transform: scale(0.9); background-color: rgba(255,255,255,0.1); }
 @media (hover: hover) { .clickable-roll:hover { background-color: rgba(255,255,255,0.05); transform: scale(1.05); color: var(--bonus-color); } }
 
-/* =========================================
-   Combat & Health (Sub-cards)
-========================================= */
+/* Combat & Health */
 .health-box { border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px; transition: all 0.5s ease; border: 1px solid rgba(255,255,255,0.1); }
 .health-header { font-size: 1.2em; font-weight: bold; margin-bottom: 15px; text-shadow: 2px 2px 4px #000; color: #fff; }
 .health-inputs { display: flex; justify-content: center; align-items: center; gap: 15px; }
@@ -198,59 +183,28 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 .btn-ammo { width: 44px; height: 44px; font-size: 1.5em; padding: 0; display: flex; align-items: center; justify-content: center; }
 .ammo-input { width: 70px; margin: 0 15px; }
 
-/* =========================================
-   Floating Dice Panel (Drag, Resize & Close)
-========================================= */
-
-/* ซ่อนหน้าต่างแบบ 100% หายไปจากจอ */
+/* Floating Dice Panel */
 .hidden-panel { display: none !important; }
-
-/* ปุ่ม ❌ ปิดหน้าต่าง */
-.btn-close-panel {
-    background: rgba(200, 0, 0, 0.2) !important;
-    border: 1px solid var(--warning-color) !important;
-    color: var(--text-main) !important;
-    padding: 6px 12px !important;
-}
+.btn-close-panel { background: rgba(200, 0, 0, 0.2) !important; border: 1px solid var(--warning-color) !important; color: var(--text-main) !important; padding: 6px 12px !important; }
 .btn-close-panel:hover { background: var(--warning-color) !important; color: #fff !important; }
 
 .dice-roller-panel {
     position: fixed; bottom: 20px; right: 20px; width: 360px; max-width: 95vw; max-height: 90vh;
     -webkit-backdrop-filter: blur(15px); backdrop-filter: blur(15px); 
-    background: rgba(30, 30, 30, 0.95);
-    z-index: 1000; border-radius: 16px; border: 1px solid rgba(255,255,255,0.2);
-    display: flex; flex-direction: column; touch-action: none; 
-    overflow: hidden;
+    background: rgba(30, 30, 30, 0.95); z-index: 1000; border-radius: 16px; 
+    border: 1px solid rgba(255,255,255,0.2); display: flex; flex-direction: column; 
+    touch-action: none; overflow: hidden;
 }
-
-/* สไตล์ตอนโดนพับเป็นไอคอนลูกเต๋า */
-.dice-roller-panel.collapsed {
-    width: 65px !important; height: 65px !important; border-radius: 16px !important; 
-    min-height: 0 !important; padding: 0; justify-content: center; align-items: center; cursor: pointer;
-}
-
-.roller-header { 
-    background: rgba(0,0,0,0.7); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; 
-    border-radius: 16px 16px 0 0; cursor: grab; border-bottom: 1px solid rgba(255,255,255,0.1); 
-    touch-action: none; width: 100%; box-sizing: border-box;
-}
+.dice-roller-panel.collapsed { width: 65px !important; height: 65px !important; border-radius: 16px !important; min-height: 0 !important; padding: 0; justify-content: center; align-items: center; cursor: pointer; }
+.roller-header { background: rgba(0,0,0,0.7); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0; cursor: grab; border-bottom: 1px solid rgba(255,255,255,0.1); touch-action: none; width: 100%; box-sizing: border-box; }
 .roller-header:active { cursor: grabbing; }
-
 .header-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
 .header-content h3 { margin: 0; font-size: 1.2em; color: #fff; text-shadow: 1px 1px 3px #000; pointer-events: none; }
-
 .collapsed-icon { display: none; font-size: 2.2em; pointer-events: none; text-shadow: 2px 2px 5px #000; }
-
-/* จัดระเบียบตอนพับเก็บ */
-.dice-roller-panel.collapsed .roller-header {
-    padding: 0; height: 100%; border-radius: 16px; border-bottom: none;
-    justify-content: center; background: rgba(0,0,0,0.85);
-}
+.dice-roller-panel.collapsed .roller-header { padding: 0; height: 100%; border-radius: 16px; border-bottom: none; justify-content: center; background: rgba(0,0,0,0.85); }
 .dice-roller-panel.collapsed .header-content { display: none; }
 .dice-roller-panel.collapsed .collapsed-icon { display: block; }
-.dice-roller-panel.collapsed #dice-panel-content,
-.dice-roller-panel.collapsed #dice-resize-handle { display: none; }
-
+.dice-roller-panel.collapsed #dice-panel-content, .dice-roller-panel.collapsed #dice-resize-handle { display: none; }
 #dice-panel-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
 .dice-log { padding: 15px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; min-height: 150px; }
 .log-entry { background: linear-gradient(145deg, #222, #111); padding: 15px; border-radius: 12px; border-left: 5px solid var(--bonus-color); font-size: 1em; box-shadow: 3px 3px 6px #000; }
@@ -258,7 +212,6 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 .btn-copy-log { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.4em; transition: 0.2s; }
 .btn-copy-log:hover { color: white; transform: scale(1.2); }
 .btn-small { padding: 8px 15px; min-height: 0; min-width: 0; font-size: 0.9em; pointer-events: auto; }
-
 .dice-settings { display: flex; justify-content: space-between; gap: 15px; padding: 15px; background: rgba(0,0,0,0.4); border-bottom: 1px solid #333; }
 .setting-group { display: flex; flex-direction: column; flex: 1; font-size: 0.9em; color: #bbb; gap: 5px; font-weight: bold; }
 .roll-mode { display: flex; justify-content: space-around; padding: 12px; background: #000; font-size: 0.95em; border-bottom: 1px solid #333; font-weight: bold; }
@@ -272,29 +225,47 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 }
 
 /* =========================================
-   🛑 3D Dice Overlays (แก้บั๊กจมใน iOS แบบ 100%)
+   🛑 3D Dice Overlays (The iOS 16 GPU Killer Fix)
 ========================================= */
+
+/* ซ่อน Overlay แบบกระชากให้หายไปจากระบบ Render */
 .hidden-overlay { 
     display: none !important; 
     opacity: 0 !important; 
     visibility: hidden !important; 
     pointer-events: none !important; 
     z-index: -99999 !important; 
+    transform: scale(0) !important;
+    -webkit-transform: scale(0) !important;
 }
+
 #dice-3d-overlay { 
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 99999; 
     display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%); 
 }
-.dice-container { display: flex; gap: 50px; perspective: 1000px; }
+
+.dice-container { 
+    display: flex; gap: 50px; 
+    perspective: 1000px; 
+    -webkit-perspective: 1000px;
+}
 
 .dice-3d-wrapper { 
     position: relative; width: 150px; height: 150px; 
-    transform-style: preserve-3d; filter: drop-shadow(0 20px 20px rgba(0,0,0,0.9)); 
-    transform: translateZ(0); will-change: transform; 
+    transform-style: preserve-3d; 
+    -webkit-transform-style: preserve-3d;
+    filter: drop-shadow(0 20px 20px rgba(0,0,0,0.9)); 
+    -webkit-filter: drop-shadow(0 20px 20px rgba(0,0,0,0.9)); 
+    transform: translateZ(0); 
+    -webkit-transform: translateZ(0); 
+    
+    /* ⚠️ ลบ will-change: transform ออกไป เพราะมันคือต้นเหตุทำ iOS 16 ค้าง */
+    backface-visibility: hidden; 
+    -webkit-backface-visibility: hidden;
 }
+
 .dice-svg { width: 100%; height: 100%; filter: hue-rotate(var(--dice-hue, 0deg)); }
 
-/* ดันตัวเลขขึ้นมาหน้าสุดบน iOS */
 .dice-result-text { 
     position: absolute; top: 50%; left: 50%; 
     transform: translate(-50%, -30%) translateZ(100px); 
@@ -303,7 +274,7 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
     text-shadow: 0px 4px 15px rgba(0,0,0,1); opacity: 0; z-index: 100;
 }
 
-/* Platform Specific Hiding (การซ่อนระบบขยายจอในมือถือ) */
+/* Platform Specific Hiding */
 .platform-ios .resize-handle, 
 .platform-android .resize-handle {
     display: none !important;
@@ -312,8 +283,8 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 .adv-highlight { color: var(--success-color); text-shadow: 0 0 25px var(--success-color), 0px 4px 15px #000; }
 .dis-highlight { color: var(--warning-color); text-shadow: 0 0 25px var(--warning-color), 0px 4px 15px #000; }
 
-@keyframes tumbling { 0% { transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); } 100% { transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); } }
-@keyframes tumbling-delay { 0% { transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); opacity: 0;} 10% { opacity: 1;} 100% { transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); } }
+@keyframes tumbling { 0% { transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); -webkit-transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); } 100% { transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); -webkit-transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); } }
+@keyframes tumbling-delay { 0% { transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); -webkit-transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); opacity: 0;} 10% { opacity: 1;} 100% { transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); -webkit-transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); } }
 @keyframes popNumber { 
     0% { opacity: 0; transform: translate(-50%, -30%) scale(0.2) translateZ(100px); -webkit-transform: translate(-50%, -30%) scale(0.2) translateZ(100px); } 
     100% { opacity: 1; transform: translate(-50%, -30%) scale(1) translateZ(100px); -webkit-transform: translate(-50%, -30%) scale(1) translateZ(100px); } 
@@ -321,9 +292,7 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 
 #yt-bgm-container { position: fixed; top: -9999px; left: -9999px; z-index: -9999; opacity: 0.01; pointer-events: none; }
 
-/* ========================================================
-   RESPONSIVE DESIGN 
-======================================================== */
+/* Responsive Design */
 @media (max-width: 1024px) {
     .sheet-main { grid-template-columns: 1fr 1fr; }
     .stats-col { display: block; grid-column: 1 / -1; }
@@ -341,8 +310,6 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
     .header-actions { flex-direction: column; }
     .header-actions button { width: 100%; }
     .attack-row { grid-template-columns: 1fr 65px 75px; padding: 10px; }
-    
-    /* หน้าต่างเต๋าบนมือถือให้ลอยได้อิสระ */
     .dice-roller-panel { bottom: 10px; right: 10px; width: 340px; }
     .dice-container { gap: 25px; flex-direction: row; }
     .dice-3d-wrapper { width: 110px; height: 110px; }
