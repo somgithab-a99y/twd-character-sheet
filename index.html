@@ -65,7 +65,10 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- เพิ่มปุ่ม เปิดหน้าต่างเต๋า ตรงนี้ -->
             <div class="header-actions">
+                <button class="btn-action" onclick="showDicePanel()" style="background: linear-gradient(145deg, #8b0000, #4a0000);">🎲 เปิดหน้าต่างเต๋า</button>
                 <button class="btn-action" onclick="toggleAllPanels()" style="background: linear-gradient(145deg, #444, #222);">↕️ ย่อ/ขยาย ทั้งหมด</button>
                 <button class="btn-sync" id="btn-sync" onclick="manualSync()">☁️ ซิงก์ (Docs)</button>
                 <button class="btn-copy" onclick="copyCharacterData()">📋 คัดลอกทั้งหมด</button>
@@ -345,13 +348,18 @@
         </main>
     </div>
 
-    <!-- Floating Dice Roller Panel (สี่เหลี่ยมลูกเต๋า) -->
+    <!-- Floating Dice Roller Panel (ลอยและย่อขยายได้) -->
+    <!-- ปิดทิ้งได้ด้วยปุ่ม ❌ -->
     <div class="dice-roller-panel panel-3d collapsed" id="dice-panel">
         <div class="roller-header" id="dice-panel-header">
             <!-- ส่วนที่แสดงเมื่อหน้าต่างกางออก -->
             <div class="header-content" id="dice-header-content">
                 <h3 id="dice-panel-title">🎲 ระบบทอยเต๋า</h3>
-                <button id="btn-clear-log" class="btn-action btn-small" onclick="event.stopPropagation(); clearDiceLog();">ล้าง</button>
+                <div style="display: flex; gap: 5px;">
+                    <button id="btn-clear-log" class="btn-action btn-small" onclick="event.stopPropagation(); clearDiceLog();">ล้าง</button>
+                    <!-- ปุ่มกากบาท สำหรับซ่อนหน้าต่างแบบหายไปเลย -->
+                    <button class="btn-action btn-small btn-close-panel" onclick="event.stopPropagation(); closeDicePanel();" title="ปิดหน้าต่าง">❌</button>
+                </div>
             </div>
             <!-- ส่วนที่แสดงเมื่อหน้าต่างพับ (ไอคอนสี่เหลี่ยมลูกเต๋า) -->
             <div class="collapsed-icon" id="dice-collapsed-icon">🎲</div>
@@ -427,6 +435,7 @@
         </div>
     </div>
 
+    <!-- YouTube BGM Container -->
     <div id="yt-bgm-container"></div>
     <script src="scriptTWD.js"></script>
 </body>
