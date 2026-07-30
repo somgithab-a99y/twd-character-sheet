@@ -223,19 +223,12 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 }
 
 /* =========================================
-   🛑 3D Dice Overlays & Skins 
+   🛑 3D Dice Overlays (The iOS 16 GPU Killer Fix)
 ========================================= */
 
-.hidden-overlay { 
-    display: none !important; 
-    opacity: 0 !important; 
-    visibility: hidden !important; 
-    pointer-events: none !important; 
-    z-index: -99999 !important; 
-}
-
-#dice-3d-overlay { 
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99999; 
+/* คลาสสำหรับหน้าต่าง Overlay ที่ถูกสร้างมาใหม่สดๆ */
+.dice-3d-overlay-fullscreen { 
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 999999; 
     display: flex; align-items: center; justify-content: center; 
     background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%); 
     cursor: pointer; 
@@ -251,7 +244,6 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
     transform-style: preserve-3d; -webkit-transform-style: preserve-3d;
     filter: drop-shadow(0 20px 20px rgba(0,0,0,0.9)); 
     -webkit-filter: drop-shadow(0 20px 20px rgba(0,0,0,0.9)); 
-    transform: translateZ(0); -webkit-transform: translateZ(0); 
 }
 
 .dice-svg { width: 100%; height: 100%; filter: hue-rotate(var(--dice-hue, 0deg)); }
@@ -259,17 +251,15 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 /* 🌟 ลายน้ำ สกินลูกเต๋า (Dice Skin Watermark) */
 .dice-watermark {
     position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -40%);
-    -webkit-transform: translate(-50%, -40%);
-    font-size: 4em; opacity: 0.25; /* จางๆ อยู่หลังตัวเลข */
+    transform: translate(-50%, -40%); -webkit-transform: translate(-50%, -40%);
+    font-size: 3.5em; opacity: 0.3; /* จางๆ อยู่หลังตัวเลข */
     z-index: 50; pointer-events: none;
     filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.8));
 }
 
 .dice-result-text { 
     position: absolute; top: 50%; left: 50%; 
-    transform: translate(-50%, -30%) translateZ(100px); 
-    -webkit-transform: translate(-50%, -30%) translateZ(100px); 
+    transform: translate(-50%, -30%) translateZ(100px); -webkit-transform: translate(-50%, -30%) translateZ(100px); 
     font-size: 3.5em; font-weight: bold; color: white; 
     text-shadow: 0px 4px 15px rgba(0,0,0,1); opacity: 0; z-index: 100;
 }
@@ -283,11 +273,7 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 .dis-highlight { color: var(--warning-color); text-shadow: 0 0 25px var(--warning-color), 0px 4px 15px #000; }
 
 @keyframes tumbling { 0% { transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); -webkit-transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); } 100% { transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); -webkit-transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); } }
-@keyframes tumbling-delay { 0% { transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); -webkit-transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); opacity: 0;} 10% { opacity: 1;} 100% { transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); -webkit-transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); } }
-@keyframes popNumber { 
-    0% { opacity: 0; transform: translate(-50%, -30%) scale(0.2) translateZ(100px); -webkit-transform: translate(-50%, -30%) scale(0.2) translateZ(100px); } 
-    100% { opacity: 1; transform: translate(-50%, -30%) scale(1) translateZ(100px); -webkit-transform: translate(-50%, -30%) scale(1) translateZ(100px); } 
-}
+@keyframes popNumber { 0% { opacity: 0; transform: translate(-50%, -30%) scale(0.2) translateZ(100px); -webkit-transform: translate(-50%, -30%) scale(0.2) translateZ(100px); } 100% { opacity: 1; transform: translate(-50%, -30%) scale(1) translateZ(100px); -webkit-transform: translate(-50%, -30%) scale(1) translateZ(100px); } }
 
 #yt-bgm-container { position: fixed; top: -9999px; left: -9999px; z-index: -9999; opacity: 0.01; pointer-events: none; }
 
