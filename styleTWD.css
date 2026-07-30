@@ -30,7 +30,7 @@ body {
     color: var(--text-main);
     margin: 0; padding: 15px;
     display: flex; justify-content: center;
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent; 
 }
 
 .sheet-container {
@@ -72,22 +72,33 @@ body {
 .btn-play { background: linear-gradient(145deg, #2a2a30, #1e1e22); color: #4dabf7; border: 1px solid #4dabf7; }
 
 /* =========================================
-   Inputs (ยุบลงไปแบบ 3D)
+   Inputs (ยุบลงไปแบบ 3D) - iOS Safari Fixes
 ========================================= */
 input[type="text"], input[type="number"], select, textarea {
     background-color: #161619;
     color: #fff;
     border: 1px solid #333;
-    box-shadow: var(--shadow-in);
+    box-shadow: var(--shadow-in); 
     padding: 12px; 
     border-radius: 8px;
     font-family: inherit;
-    font-size: 16px !important;
-    min-height: 44px;
+    font-size: 16px !important; /* ป้องกัน iOS ซูม */
+    min-height: 44px; /* ทัชสกรีน */
     box-sizing: border-box;
     transition: all 0.3s ease;
     width: 100%;
 }
+
+/* ล้าง UI Dropdown น่าเกลียดบน iOS รุ่นเก่าออก */
+select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 35px;
+}
+
 input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: var(--bonus-color);
@@ -272,7 +283,10 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 ========================================= */
 .dice-roller-panel {
     position: fixed; bottom: 20px; right: 20px; width: 360px; max-width: calc(100vw - 40px);
-    backdrop-filter: blur(15px); z-index: 1000; border-radius: 16px;
+    /* เพิ่ม -webkit- สำหรับเบลอพื้นหลังบน iOS เก่า */
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px); 
+    z-index: 1000; border-radius: 16px;
     border: 1px solid rgba(255,255,255,0.2);
 }
 .roller-header { background: rgba(0,0,0,0.6); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -293,7 +307,12 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 .hidden-overlay { display: none !important; }
 #dice-3d-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 99999; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%); }
 .dice-container { display: flex; gap: 50px; perspective: 1000px; }
-.dice-3d-wrapper { position: relative; width: 150px; height: 150px; transform-style: preserve-3d; filter: drop-shadow(0 20px 20px rgba(0,0,0,0.9)); }
+.dice-3d-wrapper { 
+    position: relative; width: 150px; height: 150px; transform-style: preserve-3d; filter: drop-shadow(0 20px 20px rgba(0,0,0,0.9)); 
+    /* เปิดใช้งาน GPU Hardware Acceleration ป้องกัน iOS กะพริบ */
+    transform: translateZ(0); 
+    will-change: transform;
+}
 .dice-svg { width: 100%; height: 100%; filter: hue-rotate(var(--dice-hue, 0deg)); }
 .dice-result-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -30%); font-size: 3em; font-weight: bold; color: white; text-shadow: 0px 4px 15px rgba(0,0,0,1); opacity: 0; }
 .adv-highlight { color: var(--success-color); text-shadow: 0 0 25px var(--success-color), 0px 4px 15px #000; }
