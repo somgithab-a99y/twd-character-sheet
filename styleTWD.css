@@ -223,10 +223,9 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 }
 
 /* =========================================
-   🛑 3D Dice Overlays (The iOS 16 GPU Killer Fix)
+   🛑 3D Dice Overlays & Skins 
 ========================================= */
 
-/* ซ่อน Overlay แบบกระชากให้หายไปจากระบบ Render เพื่อเคลียร์ RAM */
 .hidden-overlay { 
     display: none !important; 
     opacity: 0 !important; 
@@ -239,7 +238,7 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99999; 
     display: flex; align-items: center; justify-content: center; 
     background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%); 
-    cursor: pointer; /* แตะหน้าจอเพื่อปิด */
+    cursor: pointer; 
 }
 
 .dice-container { 
@@ -255,8 +254,17 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
     transform: translateZ(0); -webkit-transform: translateZ(0); 
 }
 
-/* 🎨 ระบบรูปทรงเต๋าหลากหลายรูปแบบ */
 .dice-svg { width: 100%; height: 100%; filter: hue-rotate(var(--dice-hue, 0deg)); }
+
+/* 🌟 ลายน้ำ สกินลูกเต๋า (Dice Skin Watermark) */
+.dice-watermark {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -40%);
+    -webkit-transform: translate(-50%, -40%);
+    font-size: 4em; opacity: 0.25; /* จางๆ อยู่หลังตัวเลข */
+    z-index: 50; pointer-events: none;
+    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.8));
+}
 
 .dice-result-text { 
     position: absolute; top: 50%; left: 50%; 
@@ -266,7 +274,6 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
     text-shadow: 0px 4px 15px rgba(0,0,0,1); opacity: 0; z-index: 100;
 }
 
-/* Platform Specific Hiding */
 .platform-ios .resize-handle, 
 .platform-android .resize-handle {
     display: none !important;
@@ -291,7 +298,6 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
     .character-card { max-width: 300px; margin: 0 auto 20px; }
     .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
 }
-
 @media (max-width: 768px) {
     body { padding: 0; background: var(--bg-panel); }
     .sheet-container { border-radius: 0; border: none; box-shadow: none; margin-bottom: 70px;}
