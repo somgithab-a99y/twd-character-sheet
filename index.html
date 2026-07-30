@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#12100e">
     <title>TWD RPG - Character Sheet</title>
     <link rel="stylesheet" href="styleTWD.css">
 </head>
@@ -12,7 +11,7 @@
         <!-- Header Section -->
         <header class="sheet-header">
             <div class="char-name-box">
-                <input type="text" id="char-name" placeholder="👤 ชื่อตัวละครผู้รอดชีวิต...">
+                <input type="text" id="char-name" placeholder="👤 ชื่อตัวละคร">
             </div>
             <div class="char-info-grid">
                 <div class="info-group">
@@ -56,18 +55,18 @@
                 
                 <div class="info-group" style="flex: 2;">
                     <label>☁️ Web App URL (เชื่อมต่อ Docs)</label>
-                    <input type="text" id="webapp-url" placeholder="วาง URL จาก Google Apps Script...">
+                    <input type="text" id="webapp-url" placeholder="วาง URL จาก Google Apps Script ที่นี่">
                 </div>
                 <div class="info-group" style="flex: 1.5;">
-                    <label>🎵 เสียงบรรยากาศ (BGM)</label>
+                    <label>🎵 เสียงพื้นหลัง (YouTube BGM)</label>
                     <div style="display: flex; gap: 8px;">
-                        <input type="text" id="bgm-url" placeholder="ลิงก์ YouTube..." style="flex: 1;">
+                        <input type="text" id="bgm-url" placeholder="วางลิงก์ยูทูป..." style="flex: 1;">
                         <button id="btn-bgm" onclick="toggleBGM()" class="btn-action btn-play">▶️ Play</button>
                     </div>
                 </div>
             </div>
             <div class="header-actions">
-                <button class="btn-sync" id="btn-sync" onclick="manualSync()">☁️ ซิงก์ข้อมูล (Docs)</button>
+                <button class="btn-sync" id="btn-sync" onclick="manualSync()">☁️ ซิงก์ (Docs)</button>
                 <button class="btn-copy" onclick="copyCharacterData()">📋 คัดลอกทั้งหมด</button>
                 <button class="btn-reset-data" onclick="resetLocalData()">🔄 ล้างข้อมูล</button>
             </div>
@@ -76,16 +75,14 @@
         <main class="sheet-main">
             <!-- Left Column: Stats & Portrait -->
             <section class="stats-col">
-                <!-- 📸 ระบบการ์ดภาพตัวละคร TWD -->
                 <div class="character-card panel-3d">
                     <div class="card-image-wrapper">
-                        <img id="char-portrait" src="https://placehold.co/300x400/1a1512/d4c4b7?text=Select+Survivor" alt="Portrait">
+                        <img id="char-portrait" src="https://placehold.co/300x400/1e1e22/4dabf7?text=Select+Survivor" alt="Character Portrait">
                         <div class="card-title-overlay" id="char-combo-title">ผู้รอดชีวิตปริศนา</div>
                     </div>
-                    <input type="text" id="custom-img-url" placeholder="🔗 ลิงก์รูปตัวละคร (ถ้ามี)...">
+                    <input type="text" id="custom-img-url" placeholder="🔗 ใส่ลิงก์รูปประจำตัว (ถ้ามี)...">
                 </div>
 
-                <!-- ค่าสเตตัสหลัก 6 อย่าง -->
                 <div class="stat-box stat-str" data-stat="str">
                     <label>💪 Strength</label>
                     <div class="stat-mod clickable-roll" id="str-mod" onclick="rollD20('💪 Strength', this.textContent)">+2</div>
@@ -126,7 +123,6 @@
 
             <!-- Middle Column: Combat & Skills -->
             <section class="combat-skills-col">
-                <!-- พลังชีวิต HP อัจฉริยะ -->
                 <div class="health-box health-high panel-3d" id="health-box-container">
                     <div class="health-header">❤️ พลังชีวิต (HP)</div>
                     <div class="health-inputs">
@@ -167,7 +163,7 @@
                 </div>
 
                 <div class="death-saves-panel panel-3d">
-                    <h4>💀 ท้าความตาย <small>(HP=0)</small></h4>
+                    <h4>💀 ท้าความตาย <small>(ใช้เมื่อ HP=0)</small></h4>
                     <div class="ds-checks">
                         <div class="ds-row">
                             <span class="text-success">🟢 รอด</span>
@@ -179,14 +175,14 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <button class="btn-action btn-red" onclick="rollDeathSave()" style="flex: 3;">🎲 ทอยเต๋าความตาย</button>
+                        <button class="btn-action btn-red" onclick="rollDeathSave()" style="flex: 3;">🎲 ทอยเต๋า (Roll)</button>
                         <button class="btn-action" onclick="resetDeathSaves()" style="flex: 1;">ล้าง</button>
                     </div>
                 </div>
 
                 <div class="skills-box panel-3d">
                     <div class="skills-header">
-                        <h3>🎯 ทักษะเอาตัวรอด (Skills)</h3>
+                        <h3>🎯 ทักษะ (Skills & Saves)</h3>
                         <label class="toggle-skills-label">
                             <input type="checkbox" id="show-all-skills" checked> แสดงทั้งหมด
                         </label>
@@ -213,9 +209,9 @@
                             <option value="leather">เสื้อแจ็คเก็ตหนัง (Leather) - Light</option>
                             <option value="studded">เกราะหนังตอกหมุด (Studded) - Light</option>
                             <option value="scale">อุปกรณ์กันกระสุนชั่วคราว (Scale) - Medium</option>
-                            <option value="breastplate">เสื้อเกราะกันกระสุน (Breastplate) - Medium</option>
+                            <option value="breastplate">เสื้อเกราะกันกระสุนตำรวจ (Breastplate) - Medium</option>
                             <option value="splint">เกราะเหล็กประดิษฐ์ (Splint) - Heavy</option>
-                            <option value="plate">ชุดเกราะปราบจลาจล (Plate) - Heavy</option>
+                            <option value="plate">ชุดเกราะปราบจลาจลเต็มยศ (Plate) - Heavy</option>
                         </select>
                         <label class="shield-label">
                             <input type="checkbox" id="shield-check"> 🛡️ ถือโล่ / ฝาถังขยะ (+2 AC)
@@ -286,18 +282,18 @@
                 </div>
 
                 <div class="panel panel-3d">
-                    <h3>🎒 กระเป๋าเสบียง & ยุทธวิธี</h3>
-                    <textarea id="inventory-text" rows="3" placeholder="เสบียง, อาหาร, น้ำ, ยาปฏิชีวนะ..."></textarea>
-                    <textarea id="tactics-text" rows="3" placeholder="ยุทธวิธี: Walker Guts (พรางกลิ่น), First Aid..." style="margin-top:10px;"></textarea>
+                    <h3>🎒 ช่องเก็บของ & ยุทธวิธี</h3>
+                    <textarea id="inventory-text" rows="3" placeholder="อาหาร, น้ำ, ยาปฏิชีวนะ, แผนการ..."></textarea>
+                    <textarea id="tactics-text" rows="3" placeholder="ยุทธวิธี: เช่น Walker Guts (พรางกลิ่น), First Aid..." style="margin-top:10px;"></textarea>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- Floating Dice Roller Panel (TWD Style) -->
+    <!-- Floating Dice Roller Panel -->
     <div class="dice-roller-panel panel-3d" id="dice-panel">
         <div class="roller-header" onclick="toggleDicePanel()">
-            <h3 id="dice-panel-title">🎲 ทอยเต๋า (แสดง/ซ่อน)</h3>
+            <h3 id="dice-panel-title">🎲 ทอยเต๋า (ซ่อน)</h3>
             <button id="btn-clear-log" class="btn-action btn-small" onclick="event.stopPropagation(); clearDiceLog();">ล้าง</button>
         </div>
         <div id="dice-panel-content">
@@ -305,10 +301,10 @@
                 <div class="setting-group">
                     <label>🎨 สีเต๋า:</label>
                     <select id="dice-color-select">
-                        <option value="0">🔴 เลือด (Red)</option>
-                        <option value="120">🟢 พิษ (Green)</option>
-                        <option value="210">🔵 เหล็ก (Blue)</option>
-                        <option value="30">🟤 สนิม (Brown)</option>
+                        <option value="0">🔴 แดง</option>
+                        <option value="120">🟢 เขียว</option>
+                        <option value="210">🔵 น้ำเงิน</option>
+                        <option value="290">🟪 ม่วง</option>
                     </select>
                 </div>
                 <div class="setting-group">
@@ -327,7 +323,7 @@
                 <label class="text-danger"><input type="radio" id="roll-dis" name="roll_mode" value="disadvantage"> เสียเปรียบ</label>
             </div>
             <div class="dice-log" id="dice-log">
-                <div class="text-muted" style="text-align:center; margin-top:10px;">คลิกที่ค่าสเตตัสหรืออาวุธเพื่อทอยเต๋า</div>
+                <div class="text-muted" style="text-align:center; margin-top:10px;">คลิกที่ค่าสถานะหรืออาวุธเพื่อทอยเต๋า</div>
             </div>
         </div>
     </div>
@@ -337,39 +333,38 @@
         <div class="dice-container" id="dice-container">
             <div class="dice-3d-wrapper" id="dice-wrapper-1">
                 <svg viewBox="0 0 100 100" class="dice-svg">
-                    <polygon points="50,20 15,70 85,70" fill="#8b0000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="50,0 0,25 50,20" fill="#a01111" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="50,0 100,25 50,20" fill="#660000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="0,25 15,70 50,20" fill="#b30000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="100,25 85,70 50,20" fill="#550000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="0,25 0,75 15,70" fill="#cc0000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="100,25 100,75 85,70" fill="#440000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="0,75 50,100 15,70" fill="#990000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="100,75 50,100 85,70" fill="#330000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="15,70 50,100 85,70" fill="#7a0000" stroke="#ff3333" stroke-width="1.5"/>
+                    <polygon points="50,20 15,70 85,70" fill="#b22222" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="50,0 0,25 50,20" fill="#ff6666" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="50,0 100,25 50,20" fill="#d00000" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="0,25 15,70 50,20" fill="#ff4d4d" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="100,25 85,70 50,20" fill="#cc0000" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="0,25 0,75 15,70" fill="#e60000" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="100,25 100,75 85,70" fill="#7a0000" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="0,75 50,100 15,70" fill="#990000" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="100,75 50,100 85,70" fill="#550000" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="15,70 50,100 85,70" fill="#8b0000" stroke="#ff8888" stroke-width="1.5"/>
                 </svg>
                 <div class="dice-result-text" id="dice-result-1">20</div>
             </div>
             <div class="dice-3d-wrapper" id="dice-wrapper-2" style="display: none;">
                 <svg viewBox="0 0 100 100" class="dice-svg">
-                    <!-- โครงสร้างเดียวกันกับลูกแรก -->
-                    <polygon points="50,20 15,70 85,70" fill="#8b0000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="50,0 0,25 50,20" fill="#a01111" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="50,0 100,25 50,20" fill="#660000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="0,25 15,70 50,20" fill="#b30000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="100,25 85,70 50,20" fill="#550000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="0,25 0,75 15,70" fill="#cc0000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="100,25 100,75 85,70" fill="#440000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="0,75 50,100 15,70" fill="#990000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="100,75 50,100 85,70" fill="#330000" stroke="#ff3333" stroke-width="1.5"/>
-                    <polygon points="15,70 50,100 85,70" fill="#7a0000" stroke="#ff3333" stroke-width="1.5"/>
+                    <polygon points="50,20 15,70 85,70" fill="#b22222" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="50,0 0,25 50,20" fill="#ff6666" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="50,0 100,25 50,20" fill="#d00000" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="0,25 15,70 50,20" fill="#ff4d4d" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="100,25 85,70 50,20" fill="#cc0000" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="0,25 0,75 15,70" fill="#e60000" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="100,25 100,75 85,70" fill="#7a0000" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="0,75 50,100 15,70" fill="#990000" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="100,75 50,100 85,70" fill="#550000" stroke="#ff8888" stroke-width="1.5"/>
+                    <polygon points="15,70 50,100 85,70" fill="#8b0000" stroke="#ff8888" stroke-width="1.5"/>
                 </svg>
                 <div class="dice-result-text" id="dice-result-2">20</div>
             </div>
         </div>
     </div>
 
-    <!-- YouTube BGM Container (แก้บั๊ก iOS ไม่เล่นเสียง) -->
+    <!-- YouTube BGM Container -->
     <div id="yt-bgm-container"></div>
 
     <script src="scriptTWD.js"></script>
