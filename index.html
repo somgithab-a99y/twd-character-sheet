@@ -73,8 +73,19 @@
         </header>
 
         <main class="sheet-main">
-            <!-- Left Column: Stats -->
+            <!-- Left Column: Stats & Portrait -->
             <section class="stats-col">
+                
+                <!-- 📸 ระบบการ์ดภาพตัวละคร (เพิ่มใหม่) -->
+                <div class="character-card panel-3d">
+                    <div class="card-image-wrapper">
+                        <img id="char-portrait" src="https://placehold.co/300x400/1e1e22/4dabf7?text=Select+Survivor" alt="Character Portrait">
+                        <div class="card-title-overlay" id="char-combo-title">ผู้รอดชีวิตปริศนา</div>
+                    </div>
+                    <input type="text" id="custom-img-url" placeholder="🔗 ใส่ลิงก์รูปประจำตัว (ถ้ามี)...">
+                </div>
+
+                <!-- ค่าสเตตัสหลัก 6 อย่าง -->
                 <div class="stat-box stat-str" data-stat="str">
                     <label>💪 Strength</label>
                     <div class="stat-mod clickable-roll" id="str-mod" onclick="rollD20('💪 Strength', this.textContent)">+2</div>
