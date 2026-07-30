@@ -66,6 +66,7 @@
                 </div>
             </div>
             <div class="header-actions">
+                <button class="btn-action" onclick="toggleAllPanels()" style="background: linear-gradient(145deg, #444, #222);">↕️ ย่อ/ขยาย ทั้งหมด</button>
                 <button class="btn-sync" id="btn-sync" onclick="manualSync()">☁️ ซิงก์ (Docs)</button>
                 <button class="btn-copy" onclick="copyCharacterData()">📋 คัดลอกทั้งหมด</button>
                 <button class="btn-reset-data" onclick="resetLocalData()">🔄 ล้างข้อมูล</button>
@@ -73,7 +74,7 @@
         </header>
 
         <main class="sheet-main">
-            <!-- Left Column: Stats & Portrait -->
+            <!-- Left Column: Portrait & Stats -->
             <section class="stats-col">
                 <div class="character-card panel-3d">
                     <div class="card-image-wrapper">
@@ -83,208 +84,262 @@
                     <input type="text" id="custom-img-url" placeholder="🔗 ใส่ลิงก์รูปประจำตัว (ถ้ามี)...">
                 </div>
 
-                <div class="stat-box stat-str" data-stat="str">
-                    <label>💪 Strength</label>
-                    <div class="stat-mod clickable-roll" id="str-mod" onclick="rollD20('💪 Strength', this.textContent)">+2</div>
-                    <div class="stat-total">Total: <span id="str-total">15</span></div>
-                    <div class="stat-base">Base: <input type="number" id="str-score" value="15" inputmode="numeric" pattern="[0-9]*"></div>
-                </div>
-                <div class="stat-box stat-dex" data-stat="dex">
-                    <label>🏃 Dexterity</label>
-                    <div class="stat-mod clickable-roll" id="dex-mod" onclick="rollD20('🏃 Dexterity', this.textContent)">+2</div>
-                    <div class="stat-total">Total: <span id="dex-total">14</span></div>
-                    <div class="stat-base">Base: <input type="number" id="dex-score" value="14" inputmode="numeric" pattern="[0-9]*"></div>
-                </div>
-                <div class="stat-box stat-con" data-stat="con">
-                    <label>🛡️ Constitution</label>
-                    <div class="stat-mod clickable-roll" id="con-mod" onclick="rollD20('🛡️ Constitution', this.textContent)">+1</div>
-                    <div class="stat-total">Total: <span id="con-total">13</span></div>
-                    <div class="stat-base">Base: <input type="number" id="con-score" value="13" inputmode="numeric" pattern="[0-9]*"></div>
-                </div>
-                <div class="stat-box stat-int" data-stat="int">
-                    <label>🧠 Intelligence</label>
-                    <div class="stat-mod clickable-roll" id="int-mod" onclick="rollD20('🧠 Intelligence', this.textContent)">+1</div>
-                    <div class="stat-total">Total: <span id="int-total">12</span></div>
-                    <div class="stat-base">Base: <input type="number" id="int-score" value="12" inputmode="numeric" pattern="[0-9]*"></div>
-                </div>
-                <div class="stat-box stat-wis" data-stat="wis">
-                    <label>👁️ Wisdom</label>
-                    <div class="stat-mod clickable-roll" id="wis-mod" onclick="rollD20('👁️ Wisdom', this.textContent)">+0</div>
-                    <div class="stat-total">Total: <span id="wis-total">10</span></div>
-                    <div class="stat-base">Base: <input type="number" id="wis-score" value="10" inputmode="numeric" pattern="[0-9]*"></div>
-                </div>
-                <div class="stat-box stat-cha" data-stat="cha">
-                    <label>🗣️ Charisma</label>
-                    <div class="stat-mod clickable-roll" id="cha-mod" onclick="rollD20('🗣️ Charisma', this.textContent)">-1</div>
-                    <div class="stat-total">Total: <span id="cha-total">8</span></div>
-                    <div class="stat-base">Base: <input type="number" id="cha-score" value="8" inputmode="numeric" pattern="[0-9]*"></div>
+                <!-- Panel: Stats -->
+                <div class="panel-3d collapsible-panel" id="panel-stats">
+                    <div class="panel-header" onclick="togglePanel('panel-stats')">
+                        <h3>📊 สเตตัสหลัก (Core Stats)</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="panel-content stats-grid">
+                        <div class="stat-box stat-str" data-stat="str">
+                            <label>💪 Strength</label>
+                            <div class="stat-mod clickable-roll" id="str-mod" onclick="rollD20('💪 Strength', this.textContent)">+2</div>
+                            <div class="stat-total">Total: <span id="str-total">15</span></div>
+                            <div class="stat-base">Base: <input type="number" id="str-score" value="15" inputmode="numeric" pattern="[0-9]*"></div>
+                        </div>
+                        <div class="stat-box stat-dex" data-stat="dex">
+                            <label>🏃 Dexterity</label>
+                            <div class="stat-mod clickable-roll" id="dex-mod" onclick="rollD20('🏃 Dexterity', this.textContent)">+2</div>
+                            <div class="stat-total">Total: <span id="dex-total">14</span></div>
+                            <div class="stat-base">Base: <input type="number" id="dex-score" value="14" inputmode="numeric" pattern="[0-9]*"></div>
+                        </div>
+                        <div class="stat-box stat-con" data-stat="con">
+                            <label>🛡️ Constitution</label>
+                            <div class="stat-mod clickable-roll" id="con-mod" onclick="rollD20('🛡️ Constitution', this.textContent)">+1</div>
+                            <div class="stat-total">Total: <span id="con-total">13</span></div>
+                            <div class="stat-base">Base: <input type="number" id="con-score" value="13" inputmode="numeric" pattern="[0-9]*"></div>
+                        </div>
+                        <div class="stat-box stat-int" data-stat="int">
+                            <label>🧠 Intelligence</label>
+                            <div class="stat-mod clickable-roll" id="int-mod" onclick="rollD20('🧠 Intelligence', this.textContent)">+1</div>
+                            <div class="stat-total">Total: <span id="int-total">12</span></div>
+                            <div class="stat-base">Base: <input type="number" id="int-score" value="12" inputmode="numeric" pattern="[0-9]*"></div>
+                        </div>
+                        <div class="stat-box stat-wis" data-stat="wis">
+                            <label>👁️ Wisdom</label>
+                            <div class="stat-mod clickable-roll" id="wis-mod" onclick="rollD20('👁️ Wisdom', this.textContent)">+0</div>
+                            <div class="stat-total">Total: <span id="wis-total">10</span></div>
+                            <div class="stat-base">Base: <input type="number" id="wis-score" value="10" inputmode="numeric" pattern="[0-9]*"></div>
+                        </div>
+                        <div class="stat-box stat-cha" data-stat="cha">
+                            <label>🗣️ Charisma</label>
+                            <div class="stat-mod clickable-roll" id="cha-mod" onclick="rollD20('🗣️ Charisma', this.textContent)">-1</div>
+                            <div class="stat-total">Total: <span id="cha-total">8</span></div>
+                            <div class="stat-base">Base: <input type="number" id="cha-score" value="8" inputmode="numeric" pattern="[0-9]*"></div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             <!-- Middle Column: Combat & Skills -->
             <section class="combat-skills-col">
-                <div class="health-box health-high panel-3d" id="health-box-container">
-                    <div class="health-header">❤️ พลังชีวิต (HP)</div>
-                    <div class="health-inputs">
-                        <div class="hp-group">
-                            <label>ปัจจุบัน (Current)</label>
-                            <input type="number" id="current-hp" value="10" inputmode="numeric" pattern="[0-9]*">
+                <!-- Panel: Combat -->
+                <div class="panel-3d collapsible-panel" id="panel-combat">
+                    <div class="panel-header" onclick="togglePanel('panel-combat')">
+                        <h3>⚔️ สถานะการต่อสู้ (Combat Status)</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="health-box health-high" id="health-box-container">
+                            <div class="health-header">❤️ พลังชีวิต (HP)</div>
+                            <div class="health-inputs">
+                                <div class="hp-group">
+                                    <label>ปัจจุบัน (Current)</label>
+                                    <input type="number" id="current-hp" value="10" inputmode="numeric" pattern="[0-9]*">
+                                </div>
+                                <div class="hp-divider">/</div>
+                                <div class="hp-group">
+                                    <label>สูงสุด (Max)</label>
+                                    <input type="number" id="max-hp" value="10" inputmode="numeric" pattern="[0-9]*">
+                                </div>
+                            </div>
                         </div>
-                        <div class="hp-divider">/</div>
-                        <div class="hp-group">
-                            <label>สูงสุด (Max)</label>
-                            <input type="number" id="max-hp" value="10" inputmode="numeric" pattern="[0-9]*">
+
+                        <div class="combat-stats-row">
+                            <div class="combat-box">
+                                <label>⭐ โบนัส</label>
+                                <div class="val text-highlight" id="prof-bonus">+2</div>
+                            </div>
+                            <div class="combat-box">
+                                <label>👟 ความเร็ว</label>
+                                <div class="val text-highlight" id="speed">30 ft.</div>
+                            </div>
+                            <div class="combat-box clickable-roll" id="initiative" onclick="rollD20('⚡ Initiative', this.textContent)">
+                                <label>⚡ เริ่มก่อน</label>
+                                <div class="val text-highlight">+0</div>
+                            </div>
+                            <div class="combat-box ac-box">
+                                <label>🛡️ เกราะ (AC)</label>
+                                <div class="val" id="ac-display">10</div>
+                            </div>
+                        </div>
+                        
+                        <div class="rest-buttons">
+                            <button class="btn-action btn-rest" onclick="shortRest()">☕ พักสั้น (Short Rest)</button>
+                            <button class="btn-action btn-rest" onclick="longRest()">⛺ พักยาว (Long Rest)</button>
+                        </div>
+
+                        <div class="death-saves-panel">
+                            <h4>💀 ท้าความตาย <small>(ใช้เมื่อ HP=0)</small></h4>
+                            <div class="ds-checks">
+                                <div class="ds-row">
+                                    <span class="text-success">🟢 รอด</span>
+                                    <input type="checkbox" id="ds-s-1"><input type="checkbox" id="ds-s-2"><input type="checkbox" id="ds-s-3">
+                                </div>
+                                <div class="ds-row">
+                                    <span class="text-danger">🔴 ตาย</span>
+                                    <input type="checkbox" id="ds-f-1"><input type="checkbox" id="ds-f-2"><input type="checkbox" id="ds-f-3">
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn-action btn-red" onclick="rollDeathSave()" style="flex: 3;">🎲 ทอยเต๋า (Roll)</button>
+                                <button class="btn-action" onclick="resetDeathSaves()" style="flex: 1;">ล้าง</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="combat-stats-row">
-                    <div class="combat-box panel-3d">
-                        <label>⭐ โบนัส</label>
-                        <div class="val text-highlight" id="prof-bonus">+2</div>
-                    </div>
-                    <div class="combat-box panel-3d">
-                        <label>👟 ความเร็ว</label>
-                        <div class="val text-highlight" id="speed">30 ft.</div>
-                    </div>
-                    <div class="combat-box panel-3d clickable-roll" id="initiative" onclick="rollD20('⚡ Initiative', this.textContent)">
-                        <label>⚡ เริ่มก่อน</label>
-                        <div class="val text-highlight">+0</div>
-                    </div>
-                    <div class="combat-box ac-box panel-3d">
-                        <label>🛡️ เกราะ (AC)</label>
-                        <div class="val" id="ac-display">10</div>
-                    </div>
-                </div>
-                
-                <div class="rest-buttons">
-                    <button class="btn-action btn-rest" onclick="shortRest()">☕ พักสั้น (Short Rest)</button>
-                    <button class="btn-action btn-rest" onclick="longRest()">⛺ พักยาว (Long Rest)</button>
-                </div>
-
-                <div class="death-saves-panel panel-3d">
-                    <h4>💀 ท้าความตาย <small>(ใช้เมื่อ HP=0)</small></h4>
-                    <div class="ds-checks">
-                        <div class="ds-row">
-                            <span class="text-success">🟢 รอด</span>
-                            <input type="checkbox" id="ds-s-1"><input type="checkbox" id="ds-s-2"><input type="checkbox" id="ds-s-3">
-                        </div>
-                        <div class="ds-row">
-                            <span class="text-danger">🔴 ตาย</span>
-                            <input type="checkbox" id="ds-f-1"><input type="checkbox" id="ds-f-2"><input type="checkbox" id="ds-f-3">
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn-action btn-red" onclick="rollDeathSave()" style="flex: 3;">🎲 ทอยเต๋า (Roll)</button>
-                        <button class="btn-action" onclick="resetDeathSaves()" style="flex: 1;">ล้าง</button>
-                    </div>
-                </div>
-
-                <div class="skills-box panel-3d">
-                    <div class="skills-header">
+                <!-- Panel: Skills -->
+                <div class="panel-3d collapsible-panel" id="panel-skills">
+                    <div class="panel-header" onclick="togglePanel('panel-skills')">
                         <h3>🎯 ทักษะ (Skills & Saves)</h3>
-                        <label class="toggle-skills-label">
-                            <input type="checkbox" id="show-all-skills" checked> แสดงทั้งหมด
-                        </label>
+                        <span class="toggle-icon">▼</span>
                     </div>
-                    <div class="skill-list" id="skills-container"></div>
+                    <div class="panel-content" style="padding-top: 5px;">
+                        <div class="skills-header">
+                            <label class="toggle-skills-label" style="width: 100%; text-align: right;">
+                                <input type="checkbox" id="show-all-skills" checked> แสดงทั้งหมด
+                            </label>
+                        </div>
+                        <div class="skill-list" id="skills-container"></div>
+                    </div>
                 </div>
             </section>
 
             <!-- Right Column: Attacks & Features -->
             <section class="features-col">
-                <div class="panel panel-3d">
-                    <h3>💡 ข้อมูลตัวละคร</h3>
-                    <div id="trait-description" class="trait-box">โปรดเลือกประเภทผู้รอดชีวิต</div>
-                    <div id="role-description" class="role-box">โปรดเลือกบทบาท</div>
-                    <div id="bg-description" class="bg-box">โปรดเลือกภูมิหลัง</div>
-                </div>
-
-                <div class="panel panel-3d">
-                    <h3>👕 เครื่องแต่งกาย (Armor)</h3>
-                    <div class="armor-group">
-                        <select id="armor-select">
-                            <option value="none">ชุดปกติ (ไม่มีเกราะ)</option>
-                            <option value="padded">แจ็คเก็ตหนา (Padded) - Light</option>
-                            <option value="leather">เสื้อแจ็คเก็ตหนัง (Leather) - Light</option>
-                            <option value="studded">เกราะหนังตอกหมุด (Studded) - Light</option>
-                            <option value="scale">อุปกรณ์กันกระสุนชั่วคราว (Scale) - Medium</option>
-                            <option value="breastplate">เสื้อเกราะกันกระสุนตำรวจ (Breastplate) - Medium</option>
-                            <option value="splint">เกราะเหล็กประดิษฐ์ (Splint) - Heavy</option>
-                            <option value="plate">ชุดเกราะปราบจลาจลเต็มยศ (Plate) - Heavy</option>
-                        </select>
-                        <label class="shield-label">
-                            <input type="checkbox" id="shield-check"> 🛡️ ถือโล่ / ฝาถังขยะ (+2 AC)
-                        </label>
+                <!-- Panel: Traits -->
+                <div class="panel-3d collapsible-panel" id="panel-traits">
+                    <div class="panel-header" onclick="togglePanel('panel-traits')">
+                        <h3>💡 ข้อมูลตัวละคร (Traits)</h3>
+                        <span class="toggle-icon">▼</span>
                     </div>
-                    <div id="armor-warning" class="warning-text"></div>
-                </div>
-
-                <div class="panel panel-3d">
-                    <h3>⚔️ อาวุธและการโจมตี (Attacks)</h3>
-                    <div class="attack-row header">
-                        <span>ชื่อ / ชนิดอาวุธ</span>
-                        <span title="คลิกเพื่อทอยโจมตี">ATK</span>
-                        <span title="คลิกเพื่อทอยดาเมจ">DMG</span>
-                    </div>
-                    
-                    <div class="attack-row">
-                        <div class="weapon-input-group">
-                            <input type="text" id="wpn-name-1" placeholder="ชื่ออาวุธ...">
-                            <select id="wpn-select-1" class="weapon-dropdown"></select>
-                        </div>
-                        <div id="wpn-atk-1" class="read-only-val clickable-roll">+0</div>
-                        <div id="wpn-dmg-1" class="read-only-val clickable-roll">-</div>
-                        <div id="wpn-prop-1" class="read-only-prop" style="grid-column: 1 / -1;">-</div>
-                    </div>
-                    <div class="attack-row">
-                        <div class="weapon-input-group">
-                            <input type="text" id="wpn-name-2" placeholder="ชื่ออาวุธ...">
-                            <select id="wpn-select-2" class="weapon-dropdown"></select>
-                        </div>
-                        <div id="wpn-atk-2" class="read-only-val clickable-roll">+0</div>
-                        <div id="wpn-dmg-2" class="read-only-val clickable-roll">-</div>
-                        <div id="wpn-prop-2" class="read-only-prop" style="grid-column: 1 / -1;">-</div>
-                    </div>
-                    <div class="attack-row">
-                        <div class="weapon-input-group">
-                            <input type="text" id="wpn-name-3" placeholder="ชื่ออาวุธ...">
-                            <select id="wpn-select-3" class="weapon-dropdown"></select>
-                        </div>
-                        <div id="wpn-atk-3" class="read-only-val clickable-roll">+0</div>
-                        <div id="wpn-dmg-3" class="read-only-val clickable-roll">-</div>
-                        <div id="wpn-prop-3" class="read-only-prop" style="grid-column: 1 / -1;">-</div>
+                    <div class="panel-content">
+                        <div id="trait-description" class="trait-box">โปรดเลือกประเภทผู้รอดชีวิต</div>
+                        <div id="role-description" class="role-box">โปรดเลือกบทบาท</div>
+                        <div id="bg-description" class="bg-box">โปรดเลือกภูมิหลัง</div>
                     </div>
                 </div>
 
-                <div class="panel panel-3d">
-                    <h3>🔫 กระสุน (Ammunition)</h3>
-                    <div class="ammo-container">
-                        <div class="ammo-row">
-                            <span class="ammo-label">🏹 หน้าไม้</span>
-                            <button class="btn-ammo" onclick="adjAmmo('bolt', -1)">-</button>
-                            <input type="number" id="ammo-bolt" value="0" inputmode="numeric" pattern="[0-9]*" class="ammo-input">
-                            <button class="btn-ammo" onclick="adjAmmo('bolt', 1)">+</button>
+                <!-- Panel: Armor -->
+                <div class="panel-3d collapsible-panel" id="panel-armor">
+                    <div class="panel-header" onclick="togglePanel('panel-armor')">
+                        <h3>👕 เครื่องแต่งกาย (Armor)</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="armor-group">
+                            <select id="armor-select">
+                                <option value="none">ชุดปกติ (ไม่มีเกราะ)</option>
+                                <option value="padded">แจ็คเก็ตหนา (Padded) - Light</option>
+                                <option value="leather">เสื้อแจ็คเก็ตหนัง (Leather) - Light</option>
+                                <option value="studded">เกราะหนังตอกหมุด (Studded) - Light</option>
+                                <option value="scale">อุปกรณ์กันกระสุนชั่วคราว (Scale) - Medium</option>
+                                <option value="breastplate">เสื้อเกราะกันกระสุนตำรวจ (Breastplate) - Medium</option>
+                                <option value="splint">เกราะเหล็กประดิษฐ์ (Splint) - Heavy</option>
+                                <option value="plate">ชุดเกราะปราบจลาจลเต็มยศ (Plate) - Heavy</option>
+                            </select>
+                            <label class="shield-label">
+                                <input type="checkbox" id="shield-check"> 🛡️ ถือโล่ / ฝาถังขยะ (+2 AC)
+                            </label>
                         </div>
-                        <div class="ammo-row">
-                            <span class="ammo-label">🔫 ปืนพก</span>
-                            <button class="btn-ammo" onclick="adjAmmo('pistol', -1)">-</button>
-                            <input type="number" id="ammo-pistol" value="0" inputmode="numeric" pattern="[0-9]*" class="ammo-input">
-                            <button class="btn-ammo" onclick="adjAmmo('pistol', 1)">+</button>
+                        <div id="armor-warning" class="warning-text"></div>
+                    </div>
+                </div>
+
+                <!-- Panel: Attacks -->
+                <div class="panel-3d collapsible-panel" id="panel-attacks">
+                    <div class="panel-header" onclick="togglePanel('panel-attacks')">
+                        <h3>⚔️ อาวุธและการโจมตี (Attacks)</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="attack-row header">
+                            <span>ชื่อ / ชนิดอาวุธ</span>
+                            <span title="คลิกเพื่อทอยโจมตี">ATK</span>
+                            <span title="คลิกเพื่อทอยดาเมจ">DMG</span>
                         </div>
-                        <div class="ammo-row">
-                            <span class="ammo-label">💣 ลูกซอง/ไรเฟิล</span>
-                            <button class="btn-ammo" onclick="adjAmmo('heavy', -1)">-</button>
-                            <input type="number" id="ammo-heavy" value="0" inputmode="numeric" pattern="[0-9]*" class="ammo-input">
-                            <button class="btn-ammo" onclick="adjAmmo('heavy', 1)">+</button>
+                        
+                        <div class="attack-row">
+                            <div class="weapon-input-group">
+                                <input type="text" id="wpn-name-1" placeholder="ชื่ออาวุธ...">
+                                <select id="wpn-select-1" class="weapon-dropdown"></select>
+                            </div>
+                            <div id="wpn-atk-1" class="read-only-val clickable-roll">+0</div>
+                            <div id="wpn-dmg-1" class="read-only-val clickable-roll">-</div>
+                            <div id="wpn-prop-1" class="read-only-prop" style="grid-column: 1 / -1;">-</div>
+                        </div>
+                        <div class="attack-row">
+                            <div class="weapon-input-group">
+                                <input type="text" id="wpn-name-2" placeholder="ชื่ออาวุธ...">
+                                <select id="wpn-select-2" class="weapon-dropdown"></select>
+                            </div>
+                            <div id="wpn-atk-2" class="read-only-val clickable-roll">+0</div>
+                            <div id="wpn-dmg-2" class="read-only-val clickable-roll">-</div>
+                            <div id="wpn-prop-2" class="read-only-prop" style="grid-column: 1 / -1;">-</div>
+                        </div>
+                        <div class="attack-row">
+                            <div class="weapon-input-group">
+                                <input type="text" id="wpn-name-3" placeholder="ชื่ออาวุธ...">
+                                <select id="wpn-select-3" class="weapon-dropdown"></select>
+                            </div>
+                            <div id="wpn-atk-3" class="read-only-val clickable-roll">+0</div>
+                            <div id="wpn-dmg-3" class="read-only-val clickable-roll">-</div>
+                            <div id="wpn-prop-3" class="read-only-prop" style="grid-column: 1 / -1;">-</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="panel panel-3d">
-                    <h3>🎒 ช่องเก็บของ & ยุทธวิธี</h3>
-                    <textarea id="inventory-text" rows="3" placeholder="อาหาร, น้ำ, ยาปฏิชีวนะ, แผนการ..."></textarea>
-                    <textarea id="tactics-text" rows="3" placeholder="ยุทธวิธี: เช่น Walker Guts (พรางกลิ่น), First Aid..." style="margin-top:10px;"></textarea>
+                <!-- Panel: Ammo -->
+                <div class="panel-3d collapsible-panel" id="panel-ammo">
+                    <div class="panel-header" onclick="togglePanel('panel-ammo')">
+                        <h3>🔫 กระสุน (Ammunition)</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="ammo-container">
+                            <div class="ammo-row">
+                                <span class="ammo-label">🏹 หน้าไม้</span>
+                                <button class="btn-ammo" onclick="adjAmmo('bolt', -1)">-</button>
+                                <input type="number" id="ammo-bolt" value="0" inputmode="numeric" pattern="[0-9]*" class="ammo-input">
+                                <button class="btn-ammo" onclick="adjAmmo('bolt', 1)">+</button>
+                            </div>
+                            <div class="ammo-row">
+                                <span class="ammo-label">🔫 ปืนพก</span>
+                                <button class="btn-ammo" onclick="adjAmmo('pistol', -1)">-</button>
+                                <input type="number" id="ammo-pistol" value="0" inputmode="numeric" pattern="[0-9]*" class="ammo-input">
+                                <button class="btn-ammo" onclick="adjAmmo('pistol', 1)">+</button>
+                            </div>
+                            <div class="ammo-row">
+                                <span class="ammo-label">💣 ลูกซอง/ไรเฟิล</span>
+                                <button class="btn-ammo" onclick="adjAmmo('heavy', -1)">-</button>
+                                <input type="number" id="ammo-heavy" value="0" inputmode="numeric" pattern="[0-9]*" class="ammo-input">
+                                <button class="btn-ammo" onclick="adjAmmo('heavy', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel: Inventory -->
+                <div class="panel-3d collapsible-panel" id="panel-inventory">
+                    <div class="panel-header" onclick="togglePanel('panel-inventory')">
+                        <h3>🎒 ช่องเก็บของ & ยุทธวิธี</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="panel-content">
+                        <textarea id="inventory-text" rows="3" placeholder="อาหาร, น้ำ, ยาปฏิชีวนะ, แผนการ..."></textarea>
+                        <textarea id="tactics-text" rows="3" placeholder="ยุทธวิธี: เช่น Walker Guts (พรางกลิ่น), First Aid..." style="margin-top:10px;"></textarea>
+                    </div>
                 </div>
             </section>
         </main>
