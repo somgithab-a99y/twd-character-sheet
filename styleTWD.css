@@ -7,18 +7,14 @@
     --text-muted: #a0a0a5;
     
     /* สัญลักษณ์สีต่างๆ (Neon Accents) */
-    --c-str: #ff4d4d; /* แดง */
-    --c-dex: #4caf50; /* เขียว */
-    --c-con: #ff9800; /* ส้ม */
-    --c-int: #2196f3; /* ฟ้า */
-    --c-wis: #9c27b0; /* ม่วง */
-    --c-cha: #e91e63; /* ชมพู */
+    --c-str: #ff4d4d; --c-dex: #4caf50; --c-con: #ff9800; 
+    --c-int: #2196f3; --c-wis: #9c27b0; --c-cha: #e91e63; 
     
     --bonus-color: #ffd700;
     --warning-color: #ff4d4d;
     --success-color: #4caf50;
     
-    /* มิติ 3D (Shadows & Borders) */
+    /* มิติ 3D */
     --shadow-out: 5px 5px 15px #0a0a0b, -3px -3px 10px rgba(255,255,255,0.05);
     --shadow-in: inset 4px 4px 8px #0a0a0b, inset -3px -3px 8px rgba(255,255,255,0.05);
     --border-3d: 1px solid rgba(255,255,255,0.08);
@@ -26,165 +22,106 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    margin: 0; padding: 15px;
-    display: flex; justify-content: center;
+    background-color: var(--bg-dark); color: var(--text-main);
+    margin: 0; padding: 15px; display: flex; justify-content: center;
     -webkit-tap-highlight-color: transparent; 
 }
 
 .sheet-container {
     max-width: 1250px; width: 100%;
-    background: var(--bg-panel);
-    border-radius: 16px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.9);
-    border: var(--border-3d);
-    overflow: hidden;
-    margin-bottom: 100px; 
+    background: var(--bg-panel); border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.9); border: var(--border-3d);
+    overflow: hidden; margin-bottom: 100px; 
 }
 
 /* =========================================
-   3D Panels & Buttons 
+   3D Panels & Accordion (ย่อ/ขยาย หมวดหมู่)
 ========================================= */
 .panel-3d {
-    background: var(--bg-card);
-    box-shadow: var(--shadow-out);
-    border-top: var(--border-3d);
-    border-left: var(--border-3d);
-    border-radius: 12px;
+    background: var(--bg-card); box-shadow: var(--shadow-out);
+    border-top: var(--border-3d); border-left: var(--border-3d); border-radius: 12px;
 }
 
+.collapsible-panel { margin-bottom: 20px; overflow: hidden; }
+.panel-header {
+    padding: 15px 20px; background: rgba(0,0,0,0.4); cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    user-select: none; border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.3s ease;
+}
+.panel-header:hover { background: rgba(255,255,255,0.05); }
+.panel-header h3 { margin: 0; padding: 0; font-size: 1.2em; color: var(--bonus-color); text-shadow: 1px 1px 2px #000; }
+.toggle-icon { font-size: 1.2em; color: var(--text-muted); transition: transform 0.3s ease; }
+.panel-content { padding: 20px; transition: all 0.3s ease; }
+
+/* สถานะพับเก็บของพาเนลทั่วไป */
+.collapsed .panel-content { display: none; }
+.collapsed .toggle-icon { transform: rotate(-90deg); }
+.collapsed .panel-header { border-bottom: none; }
+
 .btn-action {
-    background: linear-gradient(145deg, #333, #222);
-    color: white; border: none;
-    padding: 12px; border-radius: 8px;
-    font-weight: bold; cursor: pointer;
+    background: linear-gradient(145deg, #333, #222); color: white; border: none;
+    padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
     box-shadow: 3px 3px 6px #0a0a0b, -2px -2px 5px rgba(255,255,255,0.1);
-    transition: all 0.15s ease;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.15s ease; border-top: 1px solid rgba(255,255,255,0.1);
 }
-.btn-action:active {
-    box-shadow: var(--shadow-in);
-    transform: translateY(2px);
-    border-top: none;
-}
+.btn-action:active { box-shadow: var(--shadow-in); transform: translateY(2px); border-top: none; }
 .btn-red { background: linear-gradient(145deg, #cc0000, #8b0000); }
 .btn-play { background: linear-gradient(145deg, #2a2a30, #1e1e22); color: #4dabf7; border: 1px solid #4dabf7; }
 
 /* =========================================
-   Inputs (ยุบลงไปแบบ 3D) - iOS Safari Fixes
+   Inputs & Form
 ========================================= */
 input[type="text"], input[type="number"], select, textarea {
-    background-color: #161619;
-    color: #fff;
-    border: 1px solid #333;
-    box-shadow: var(--shadow-in); 
-    padding: 12px; 
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 16px !important; /* ป้องกัน iOS ซูม */
-    min-height: 44px; /* ทัชสกรีน */
-    box-sizing: border-box;
-    transition: all 0.3s ease;
-    width: 100%;
+    background-color: #161619; color: #fff; border: 1px solid #333; box-shadow: var(--shadow-in); 
+    padding: 12px; border-radius: 8px; font-family: inherit; font-size: 16px !important; 
+    min-height: 44px; box-sizing: border-box; transition: all 0.3s ease; width: 100%;
 }
-
-/* ล้าง UI Dropdown น่าเกลียดบน iOS รุ่นเก่าออก */
 select {
-    -webkit-appearance: none;
-    appearance: none;
+    -webkit-appearance: none; appearance: none;
     background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 35px;
+    background-repeat: no-repeat; background-position: right 10px center; padding-right: 35px;
 }
-
-input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: var(--bonus-color);
-    box-shadow: inset 2px 2px 5px #0a0a0b, 0 0 8px rgba(255,215,0,0.3);
-}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--bonus-color); box-shadow: inset 2px 2px 5px #0a0a0b, 0 0 8px rgba(255,215,0,0.3); }
 input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !important; }
 
 /* =========================================
    Header Layout
 ========================================= */
 .sheet-header { 
-    background: linear-gradient(180deg, #600000, #300000); 
-    padding: 20px; display: flex; flex-wrap: wrap; gap: 15px; 
+    background: linear-gradient(180deg, #600000, #300000); padding: 20px; display: flex; flex-wrap: wrap; gap: 15px; 
     border-bottom: 2px solid #ff4d4d; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
-.char-name-box input { 
-    background: rgba(0,0,0,0.4); border: none; border-bottom: 2px solid white; 
-    font-size: 1.8em !important; border-radius: 8px 8px 0 0; box-shadow: none; 
-}
+.char-name-box input { background: rgba(0,0,0,0.4); border: none; border-bottom: 2px solid white; font-size: 1.8em !important; border-radius: 8px 8px 0 0; box-shadow: none; }
 .char-info-grid { display: flex; flex-wrap: wrap; gap: 12px; width: 100%; }
 .info-group { display: flex; flex-direction: column; flex: 1; min-width: 150px; }
 .info-group label { font-size: 0.85em; font-weight: bold; color: #ffcccc; margin-bottom: 5px; text-shadow: 1px 1px 2px #000; }
 .level-group { flex: 0.5; min-width: 80px; }
-
 .header-actions { display: flex; width: 100%; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
 .btn-sync { background: linear-gradient(145deg, #1e3c72, #2a5298); color: #fff; }
 .btn-copy { background: linear-gradient(145deg, #333, #111); }
 .btn-reset-data { background: transparent; border: 1px solid var(--warning-color); color: var(--warning-color); box-shadow: none; }
 .btn-reset-data:hover { background: var(--warning-color); color: #000; }
-.btn-bgm-playing { box-shadow: 0 0 15px var(--success-color) !important; color: var(--success-color) !important; border-color: var(--success-color) !important; }
 
 /* =========================================
    Main Grid & Portrait System
 ========================================= */
 .sheet-main { display: grid; grid-template-columns: 240px 1.2fr 1.5fr; gap: 20px; padding: 20px; }
 
-/* ระบบการ์ดรูปภาพตัวละคร (Portrait Card) */
-.character-card {
-    padding: 12px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 5px;
-}
-.card-image-wrapper {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 3/4;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 2px solid #444;
-    box-shadow: inset 0 0 20px #000;
-    background-color: #1a1a1a;
-}
-.card-image-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: opacity 0.3s;
-}
-.card-title-overlay {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.95) 70%);
-    padding: 25px 8px 8px;
-    font-size: 0.9em;
-    font-weight: bold;
-    color: var(--bonus-color);
-    text-shadow: 1px 1px 4px #000;
-    letter-spacing: 0.5px;
-}
-#custom-img-url {
-    font-size: 0.85em !important;
-    text-align: center;
-}
+.character-card { padding: 12px; text-align: center; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.card-image-wrapper { position: relative; width: 100%; aspect-ratio: 3/4; border-radius: 8px; overflow: hidden; border: 2px solid #444; box-shadow: inset 0 0 20px #000; background-color: #1a1a1a; }
+.card-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+.card-title-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.95) 70%); padding: 25px 8px 8px; font-size: 0.9em; font-weight: bold; color: var(--bonus-color); text-shadow: 1px 1px 4px #000; }
+#custom-img-url { font-size: 0.85em !important; text-align: center; }
 
 /* =========================================
-   Stats Column
+   Stats Column (Sub-cards)
 ========================================= */
-.stats-col { display: flex; flex-direction: column; gap: 18px; }
+.stats-grid { display: flex; flex-direction: column; gap: 15px; }
 .stat-box { 
-    background: var(--bg-card); border-radius: 12px; text-align: center; padding: 15px 10px; 
-    box-shadow: var(--shadow-out); position: relative; overflow: hidden;
+    background: rgba(0,0,0,0.3); border-radius: 12px; text-align: center; padding: 15px 10px; 
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden;
 }
-/* ไฟเรืองแสงด้านบนของแต่ละสเตตัส */
 .stat-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
 .stat-str::before { background: var(--c-str); box-shadow: 0 0 10px var(--c-str); }
 .stat-dex::before { background: var(--c-dex); box-shadow: 0 0 10px var(--c-dex); }
@@ -192,79 +129,51 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 .stat-int::before { background: var(--c-int); box-shadow: 0 0 10px var(--c-int); }
 .stat-wis::before { background: var(--c-wis); box-shadow: 0 0 10px var(--c-wis); }
 .stat-cha::before { background: var(--c-cha); box-shadow: 0 0 10px var(--c-cha); }
-
-.stat-box label { font-size: 0.95em; font-weight: bold; color: var(--text-main); display: block; margin-bottom: 5px; text-shadow: 1px 1px 2px #000; }
+.stat-box label { font-size: 0.95em; font-weight: bold; color: var(--text-main); display: block; margin-bottom: 5px; }
 .stat-mod { font-size: 2.8em; font-weight: bold; margin: 10px 0; color: #fff; text-shadow: 2px 2px 5px #000; }
 .stat-total { font-size: 0.95em; color: var(--text-muted); }
 .stat-base { font-size: 0.85em; margin-top: 12px; display: flex; justify-content: center; align-items: center; gap: 8px; color: var(--text-muted); }
-.stat-base input { width: 65px; height: 36px; padding: 5px; font-size: 1.1em !important; }
+.stat-base input { width: 65px; height: 36px; padding: 5px; font-size: 1.1em !important; box-shadow: none; background: #000;}
 
 .clickable-roll { cursor: pointer; transition: 0.2s; border-radius: 8px; user-select: none; }
 .clickable-roll:active { transform: scale(0.9); background-color: rgba(255,255,255,0.1); }
 @media (hover: hover) { .clickable-roll:hover { background-color: rgba(255,255,255,0.05); transform: scale(1.05); color: var(--bonus-color); } }
 
 /* =========================================
-   HP อัจฉริยะ (Dynamic 3D Health)
+   Combat & Health (Sub-cards)
 ========================================= */
-.health-box { 
-    border-radius: 16px; padding: 25px 20px; text-align: center; margin-bottom: 20px; 
-    transition: all 0.5s ease; border-top: 1px solid rgba(255,255,255,0.2); 
-}
-.health-header { font-size: 1.4em; font-weight: bold; margin-bottom: 15px; text-shadow: 2px 2px 4px #000; color: #fff; }
+.health-box { border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px; transition: all 0.5s ease; border: 1px solid rgba(255,255,255,0.1); }
+.health-header { font-size: 1.2em; font-weight: bold; margin-bottom: 15px; text-shadow: 2px 2px 4px #000; color: #fff; }
 .health-inputs { display: flex; justify-content: center; align-items: center; gap: 15px; }
 .hp-group { display: flex; flex-direction: column; width: 45%; }
 .hp-group label { font-size: 0.9em; font-weight:bold; color: rgba(255,255,255,0.8); margin-bottom: 8px; }
-.health-inputs input { font-size: 2.5em !important; min-height: 70px; background: rgba(0,0,0,0.5); color: #fff; border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; box-shadow: inset 4px 4px 10px #000; }
-.hp-divider { font-size: 3em; font-weight: bold; color: rgba(255,255,255,0.4); text-shadow: 2px 2px 4px #000; }
+.health-inputs input { font-size: 2.2em !important; min-height: 60px; background: rgba(0,0,0,0.6); color: #fff; border: 1px solid #000; border-radius: 8px; box-shadow: inset 4px 4px 10px #000; }
+.hp-divider { font-size: 2.5em; font-weight: bold; color: rgba(255,255,255,0.4); text-shadow: 2px 2px 4px #000; }
 
-.health-high { background: linear-gradient(145deg, #1e3a1f, #122213); box-shadow: 0 0 20px rgba(76, 175, 80, 0.4), var(--shadow-out); }
+.health-high { background: linear-gradient(145deg, #1e3a1f, #122213); box-shadow: inset 0 0 20px rgba(76, 175, 80, 0.2); }
 .health-high input { color: #81c784; }
-.health-med { background: linear-gradient(145deg, #3d2400, #241500); box-shadow: 0 0 20px rgba(255, 152, 0, 0.4), var(--shadow-out); }
+.health-med { background: linear-gradient(145deg, #3d2400, #241500); box-shadow: inset 0 0 20px rgba(255, 152, 0, 0.2); }
 .health-med input { color: #ffb74d; }
 .health-low { background: linear-gradient(145deg, #3d0a0a, #220505); animation: pulseRed 1.5s infinite; }
 .health-low input { color: #e57373; }
 .health-dead { background: linear-gradient(145deg, #1a1a1a, #0d0d0d); filter: grayscale(1); }
-@keyframes pulseRed { 
-    0% { box-shadow: 0 0 10px rgba(244,67,54,0.3), var(--shadow-out); } 
-    50% { box-shadow: 0 0 30px rgba(244,67,54,0.8), var(--shadow-out); } 
-    100% { box-shadow: 0 0 10px rgba(244,67,54,0.3), var(--shadow-out); } 
-}
 
-/* =========================================
-   Combat & Panels
-========================================= */
-.combat-stats-row { display: flex; gap: 12px; margin-bottom: 20px; }
+.combat-stats-row { display: flex; gap: 10px; margin-bottom: 20px; }
+.combat-box, .death-saves-panel { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5); border-radius: 12px; }
 .combat-box { padding: 15px 5px; text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: center; }
-.ac-box { border: 2px solid var(--bonus-color); background: rgba(255,215,0,0.05); }
+.ac-box { border: 1px solid var(--bonus-color); background: rgba(255,215,0,0.05); }
 .combat-box label { font-size: 0.85em; color: var(--text-muted); font-weight: bold; }
 .combat-box .val { font-size: 1.6em; font-weight: bold; margin-top: 8px; text-shadow: 1px 1px 2px #000;}
 .text-highlight { color: #4dabf7; }
 
-.panel { padding: 20px; margin-bottom: 20px; }
-.panel h3 { margin: 0 0 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; font-size: 1.2em; color: var(--bonus-color); text-shadow: 1px 1px 2px #000; }
-
-.attack-row { display: grid; grid-template-columns: 1fr 80px 100px; gap: 10px; align-items: center; margin-bottom: 12px; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 12px; box-shadow: var(--shadow-in); }
-.attack-row.header { background: none; box-shadow: none; font-size: 0.85em; color: var(--text-muted); border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 8px; }
-.weapon-input-group { display: flex; flex-direction: column; gap: 8px; }
-.read-only-val { text-align: center; font-weight: bold; font-size: 1.2em; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 12px 0; border: 1px solid rgba(255,255,255,0.1); box-shadow: 2px 2px 5px #000;}
-.read-only-prop { font-size: 0.85em; padding-top: 8px; border-top: 1px dashed #555; color: #bbb; }
-
-.ammo-container { display: flex; flex-direction: column; gap: 12px; }
-.ammo-row { display: flex; align-items: center; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 12px; box-shadow: var(--shadow-in); }
-.ammo-label { flex-grow: 1; font-weight: bold; font-size: 1em; color: #fff;}
-.btn-ammo { width: 44px; height: 44px; font-size: 1.5em; padding: 0; display: flex; align-items: center; justify-content: center; }
-.ammo-input { width: 70px; margin: 0 15px; }
-
-/* Rest & Death Saves */
 .rest-buttons { display: flex; gap: 15px; margin-bottom: 20px; }
-.btn-rest { font-size: 1.1em; padding: 15px; border-radius: 12px; }
-.death-saves-panel { text-align: center; padding: 20px; margin-bottom: 20px; }
-.ds-checks { display: flex; justify-content: space-around; margin-bottom: 15px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; box-shadow: var(--shadow-in);}
+.btn-rest { font-size: 1em; padding: 15px; border-radius: 12px; }
+.death-saves-panel { text-align: center; padding: 20px; }
+.ds-checks { display: flex; justify-content: space-around; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; box-shadow: inset 2px 2px 5px #000;}
 .ds-row span { font-weight: bold; font-size: 1.1em; margin-right: 8px; }
 .ds-row input[type="checkbox"] { transform: scale(1.8); margin: 0 8px; }
 
 /* Skills */
-.skills-box { padding: 20px; }
 .skills-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 10px; }
 .skill-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
 .skill-row input[type="checkbox"] { transform: scale(1.6); margin-right: 15px; }
@@ -272,57 +181,104 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 .skill-name { font-size: 1.05em; font-weight: 500;}
 .skill-stat { font-size: 0.85em; color: var(--text-muted); }
 
-/* Info Boxes */
-.trait-box, .role-box, .bg-box { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; font-size: 0.95em; margin-top: 15px; line-height: 1.6; box-shadow: var(--shadow-in); border: 1px solid #333; }
+/* Traits & Weapons */
+.trait-box, .role-box, .bg-box { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; font-size: 0.95em; margin-top: 15px; line-height: 1.6; box-shadow: inset 2px 2px 5px #000; border: 1px solid #333; }
 .trait-box { border-left: 5px solid var(--c-con); }
 .role-box { border-left: 5px solid var(--c-str); }
 .bg-box { border-left: 5px solid var(--c-int); }
 
+.attack-row { display: grid; grid-template-columns: 1fr 80px 100px; gap: 10px; align-items: center; margin-bottom: 12px; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 12px; box-shadow: inset 2px 2px 5px #000; }
+.attack-row.header { background: none; box-shadow: none; font-size: 0.85em; color: var(--text-muted); border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 8px; }
+.weapon-input-group { display: flex; flex-direction: column; gap: 8px; }
+.read-only-val { text-align: center; font-weight: bold; font-size: 1.2em; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 12px 0; border: 1px solid rgba(255,255,255,0.1); box-shadow: 2px 2px 5px #000;}
+.read-only-prop { font-size: 0.85em; padding-top: 8px; border-top: 1px dashed #555; color: #bbb; }
+
+.ammo-container { display: flex; flex-direction: column; gap: 12px; }
+.ammo-row { display: flex; align-items: center; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 12px; box-shadow: inset 2px 2px 5px #000; }
+.ammo-label { flex-grow: 1; font-weight: bold; font-size: 1em; color: #fff;}
+.btn-ammo { width: 44px; height: 44px; font-size: 1.5em; padding: 0; display: flex; align-items: center; justify-content: center; }
+.ammo-input { width: 70px; margin: 0 15px; }
+
 /* =========================================
-   Floating Dice Panel & 3D Dice
+   Floating Dice Panel (Drag, Resize & Icon)
 ========================================= */
 .dice-roller-panel {
-    position: fixed; bottom: 20px; right: 20px; width: 360px; max-width: calc(100vw - 40px);
-    /* เพิ่ม -webkit- สำหรับเบลอพื้นหลังบน iOS เก่า */
-    -webkit-backdrop-filter: blur(15px);
-    backdrop-filter: blur(15px); 
-    z-index: 1000; border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.2);
+    position: fixed; bottom: 20px; right: 20px; width: 360px; max-width: 95vw; max-height: 90vh;
+    -webkit-backdrop-filter: blur(15px); backdrop-filter: blur(15px); 
+    background: rgba(30, 30, 30, 0.95);
+    z-index: 1000; border-radius: 16px; border: 1px solid rgba(255,255,255,0.2);
+    display: flex; flex-direction: column; touch-action: none; 
+    overflow: hidden;
 }
-.roller-header { background: rgba(0,0,0,0.6); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); }
-.roller-header h3 { margin: 0; font-size: 1.2em; color: #fff; text-shadow: 1px 1px 3px #000; }
-.dice-log { padding: 15px; height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+
+/* สไตล์เฉพาะตอนหน้าต่างโดนพับเป็นสี่เหลี่ยมลูกเต๋าเล็กๆ */
+.dice-roller-panel.collapsed {
+    width: 65px !important; 
+    height: 65px !important; 
+    border-radius: 16px !important; /* เป็นสี่เหลี่ยมโค้งมนนิดๆ สวยงาม */
+    min-height: 0 !important;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.roller-header { 
+    background: rgba(0,0,0,0.7); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; 
+    border-radius: 16px 16px 0 0; cursor: grab; border-bottom: 1px solid rgba(255,255,255,0.1); 
+    touch-action: none; width: 100%; box-sizing: border-box;
+}
+.roller-header:active { cursor: grabbing; }
+
+.header-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.header-content h3 { margin: 0; font-size: 1.2em; color: #fff; text-shadow: 1px 1px 3px #000; pointer-events: none; }
+
+.collapsed-icon { display: none; font-size: 2.2em; pointer-events: none; text-shadow: 2px 2px 5px #000; }
+
+/* จัดระเบียบตอนพับเก็บ */
+.dice-roller-panel.collapsed .roller-header {
+    padding: 0; height: 100%; border-radius: 16px; border-bottom: none;
+    justify-content: center; background: rgba(0,0,0,0.85); /* เข้มขึ้นเพื่อให้ไอคอนชัด */
+}
+.dice-roller-panel.collapsed .header-content { display: none; }
+.dice-roller-panel.collapsed .collapsed-icon { display: block; }
+.dice-roller-panel.collapsed #dice-panel-content,
+.dice-roller-panel.collapsed #dice-resize-handle { display: none; }
+
+#dice-panel-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+.dice-log { padding: 15px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; min-height: 150px; }
 .log-entry { background: linear-gradient(145deg, #222, #111); padding: 15px; border-radius: 12px; border-left: 5px solid var(--bonus-color); font-size: 1em; box-shadow: 3px 3px 6px #000; }
 .log-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
 .btn-copy-log { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.4em; transition: 0.2s; }
 .btn-copy-log:hover { color: white; transform: scale(1.2); }
-.btn-small { padding: 8px 15px; min-height: 0; min-width: 0; font-size: 0.9em; }
+.btn-small { padding: 8px 15px; min-height: 0; min-width: 0; font-size: 0.9em; pointer-events: auto; }
 
 .dice-settings { display: flex; justify-content: space-between; gap: 15px; padding: 15px; background: rgba(0,0,0,0.4); border-bottom: 1px solid #333; }
 .setting-group { display: flex; flex-direction: column; flex: 1; font-size: 0.9em; color: #bbb; gap: 5px; font-weight: bold; }
 .roll-mode { display: flex; justify-content: space-around; padding: 12px; background: #000; font-size: 0.95em; border-bottom: 1px solid #333; font-weight: bold; }
 .roll-mode input[type="radio"] { transform: scale(1.3); margin-right: 5px; }
 
+/* ปุ่มลากดึงเพื่อขยายหน้าต่าง */
+.resize-handle {
+    position: absolute; bottom: 0; right: 0; width: 25px; height: 25px;
+    cursor: nwse-resize; z-index: 10; touch-action: none;
+    background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.3) 50%);
+    border-bottom-right-radius: 16px;
+}
+
 /* 3D Dice Overlays */
 .hidden-overlay { display: none !important; }
 #dice-3d-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 99999; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%); }
 .dice-container { display: flex; gap: 50px; perspective: 1000px; }
-.dice-3d-wrapper { 
-    position: relative; width: 150px; height: 150px; transform-style: preserve-3d; filter: drop-shadow(0 20px 20px rgba(0,0,0,0.9)); 
-    /* เปิดใช้งาน GPU Hardware Acceleration ป้องกัน iOS กะพริบ */
-    transform: translateZ(0); 
-    will-change: transform;
-}
+.dice-3d-wrapper { position: relative; width: 150px; height: 150px; transform-style: preserve-3d; filter: drop-shadow(0 20px 20px rgba(0,0,0,0.9)); transform: translateZ(0); will-change: transform; }
 .dice-svg { width: 100%; height: 100%; filter: hue-rotate(var(--dice-hue, 0deg)); }
 .dice-result-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -30%); font-size: 3em; font-weight: bold; color: white; text-shadow: 0px 4px 15px rgba(0,0,0,1); opacity: 0; }
 .adv-highlight { color: var(--success-color); text-shadow: 0 0 25px var(--success-color), 0px 4px 15px #000; }
 .dis-highlight { color: var(--warning-color); text-shadow: 0 0 25px var(--warning-color), 0px 4px 15px #000; }
-
 @keyframes tumbling { 0% { transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); } 100% { transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); } }
 @keyframes tumbling-delay { 0% { transform: translate3d(-300px, 300px, -300px) rotateX(0deg) rotateY(0deg) scale(0.2); opacity: 0;} 10% { opacity: 1;} 100% { transform: translate3d(0, 0, 0) rotateX(1440deg) rotateY(1440deg) scale(1); } }
 @keyframes popNumber { 0% { opacity: 0; transform: translate(-50%, -30%) scale(0.2); } 100% { opacity: 1; transform: translate(-50%, -30%) scale(1); } }
 
-/* YouTube BGM Container */
 #yt-bgm-container { position: fixed; top: -9999px; left: -9999px; z-index: -9999; opacity: 0.01; pointer-events: none; }
 
 /* ========================================================
@@ -330,8 +286,9 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
 ======================================================== */
 @media (max-width: 1024px) {
     .sheet-main { grid-template-columns: 1fr 1fr; }
-    .stats-col { display: grid; grid-template-columns: repeat(3, 1fr); grid-column: 1 / -1; }
-    .character-card { grid-column: 1 / -1; max-width: 300px; margin: 0 auto; }
+    .stats-col { display: block; grid-column: 1 / -1; }
+    .character-card { max-width: 300px; margin: 0 auto 20px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
 }
 
 @media (max-width: 768px) {
@@ -339,14 +296,14 @@ input[type="number"] { text-align: center; font-weight: bold; font-size: 1.2em !
     .sheet-container { border-radius: 0; border: none; box-shadow: none; margin-bottom: 70px;}
     .sheet-header { padding: 15px; border-radius: 0; }
     .sheet-main { grid-template-columns: 1fr; display: flex; flex-direction: column; padding: 10px; gap: 10px; }
-    
-    .stats-col { grid-template-columns: repeat(2, 1fr); gap: 10px;}
-    .character-card { grid-column: 1 / -1; max-width: 100%; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px;}
+    .character-card { max-width: 100%; }
     .header-actions { flex-direction: column; }
     .header-actions button { width: 100%; }
     .attack-row { grid-template-columns: 1fr 65px 75px; padding: 10px; }
     
-    .dice-roller-panel { bottom: 0; right: 0; width: 100vw; max-width: 100vw; border-radius: 20px 20px 0 0; border: none; border-top: 1px solid rgba(255,255,255,0.2); background: rgba(25, 25, 25, 0.98); }
+    /* หน้าต่างเต๋าบนมือถือให้ลอยได้อิสระ */
+    .dice-roller-panel { bottom: 10px; right: 10px; width: 340px; }
     .dice-container { gap: 25px; flex-direction: row; }
     .dice-3d-wrapper { width: 110px; height: 110px; }
 }
