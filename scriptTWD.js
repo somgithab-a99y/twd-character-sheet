@@ -73,7 +73,53 @@ let currentRace = 'none';
 let currentBg = 'none';
 
 // ==========================================
-// 2. การสร้าง UI (อาวุธ & ทักษะ)
+// 2. ระบบ UI (หน้าต่างย่อ-ขยาย Accordion)
+// ==========================================
+let allCollapsed = false;
+
+function togglePanel(panelId) {
+    const panel = document.getElementById(panelId);
+    if (panel) {
+        panel.classList.toggle('collapsed');
+        saveUIState();
+    }
+}
+
+function toggleAllPanels() {
+    allCollapsed = !allCollapsed;
+    document.querySelectorAll('.collapsible-panel').forEach(panel => {
+        if (allCollapsed) panel.classList.add('collapsed');
+        else panel.classList.remove('collapsed');
+    });
+    saveUIState();
+}
+
+function saveUIState() {
+    const panels = document.querySelectorAll('.collapsible-panel');
+    const state = {};
+    panels.forEach(p => { state[p.id] = p.classList.contains('collapsed'); });
+    localStorage.setItem('twd_rpg_ui_state', JSON.stringify(state));
+}
+
+function loadUIState() {
+    try {
+        const stateStr = localStorage.getItem('twd_rpg_ui_state');
+        if (stateStr) {
+            const state = JSON.parse(stateStr);
+            for (const [id, isCollapsed] of Object.entries(state)) {
+                const p = document.getElementById(id);
+                if (p) {
+                    if (isCollapsed) p.classList.add('collapsed');
+                    else p.classList.remove('collapsed');
+                }
+            }
+        }
+    } catch(e) {}
+}
+
+
+// ==========================================
+// 3. การสร้าง UI (อาวุธ & ทักษะ)
 // ==========================================
 function initWeapons() {
     [1, 2, 3].forEach(slotId => {
@@ -104,7 +150,7 @@ skillsData.forEach((skill, index) => {
 });
 
 // ==========================================
-// 3. ระบบคำนวณสเตตัส & สีเลือด & การ์ดรูปภาพ
+// 4. ระบบคำนวณสเตตัส & สีเลือด & การ์ดรูปภาพ
 // ==========================================
 function updateHealthVisuals() {
     const current = parseInt(document.getElementById('current-hp').value) || 0;
@@ -112,7 +158,7 @@ function updateHealthVisuals() {
     const container = document.getElementById('health-box-container');
     const percent = (current / max) * 100;
 
-    container.className = 'health-box panel-3d'; 
+    container.className = 'health-box'; 
     if (current <= 0) { container.classList.add('health-dead'); } 
     else if (percent >= 70) { container.classList.add('health-high'); } 
     else if (percent >= 35) { container.classList.add('health-med'); } 
@@ -122,7 +168,6 @@ function updateHealthVisuals() {
 document.getElementById('current-hp').addEventListener('input', updateHealthVisuals);
 document.getElementById('max-hp').addEventListener('input', updateHealthVisuals);
 
-// ระบบคำนวณภาพการ์ด (Pollinations AI)
 function updateCharacterCard() {
     const typeObj = document.getElementById('survivor-type');
     const roleObj = document.getElementById('role');
@@ -258,7 +303,7 @@ function updateCalculations() {
 }
 
 // ====================================================
-// 4. ระบบเซฟข้อมูลลงเครื่อง (ป้องกัน iOS Private Mode)
+// 5. ระบบเซฟข้อมูลลงเครื่อง (ป้องกัน iOS Private Mode)
 // ====================================================
 const LOCAL_STORAGE_KEY = 'twd_rpg_char_data';
 
@@ -270,9 +315,7 @@ function saveLocalData() {
             if (el.id) data[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
         });
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
-    } catch (e) {
-        console.warn("Local Storage ถูกจำกัด (อาจเปิดโหมดส่วนตัวอยู่)");
-    }
+    } catch (e) {}
 }
 
 function loadLocalData() {
@@ -298,13 +341,13 @@ function loadLocalData() {
 
 function resetLocalData() {
     if (confirm("⚠️ ต้องการล้างข้อมูลทั้งหมด และเริ่มใหม่ใช่หรือไม่?")) {
-        try { localStorage.removeItem(LOCAL_STORAGE_KEY); } catch (e) {}
+        try { localStorage.removeItem(LOCAL_STORAGE_KEY); localStorage.removeItem('twd_rpg_ui_state'); } catch (e) {}
         location.reload(); 
     }
 }
 
 // ====================================================
-// 5. ระบบซิงก์ข้อมูลไป Google Docs
+// 6. ระบบซิงก์ข้อมูลไป Google Docs
 // ====================================================
 let syncTimer = null;
 
@@ -425,7 +468,7 @@ function copyLogEntry(btnElement) {
 }
 
 // ====================================================
-// 6. ระบบ YouTube BGM พื้นหลัง (Safari/iOS Fix)
+// 7. ระบบ YouTube BGM พื้นหลัง (Safari/iOS Fix)
 // ====================================================
 let isBgmPlaying = false;
 function extractVideoID(url) {
@@ -452,7 +495,7 @@ function toggleBGM() {
 }
 
 // ====================================================
-// 7. ระบบแอคชั่น, การพักผ่อน และทอยเต๋า 3D
+// 8. ระบบแอคชั่น, การพักผ่อน และทอยเต๋า 3D
 // ====================================================
 function adjAmmo(type, amount) {
     const input = document.getElementById(`ammo-${type}`);
@@ -488,7 +531,7 @@ function rollDeathSave() {
         logEntry.dataset.copytext = `💀 ท้าความตาย\nทอยได้: ${roll}\nผลลัพธ์: ${plainText}`;
         logEntry.innerHTML = `<div class="log-header-row"><div style="font-weight:bold;">💀 ท้าความตาย (Death Save)</div><button class="btn-copy-log" onclick="copyLogEntry(this)">📋</button></div><div style="font-size: 1.1em; margin-top:5px;">ทอยได้ <b>${roll}</b> ➔ ${resultText}</div>`;
         document.getElementById('dice-log').prepend(logEntry);
-        if (document.getElementById('dice-panel-content').style.display === 'none') toggleDicePanel();
+        if (document.getElementById('dice-panel-content').style.display === 'none') togglePanel('dice-panel');
     });
 }
 
@@ -513,8 +556,7 @@ function resetDeathSaves() {
 }
 
 function toggleDicePanel() {
-    const p = document.getElementById('dice-panel-content');
-    p.style.display = p.style.display === 'none' ? 'flex' : 'none';
+    togglePanel('dice-panel');
 }
 function clearDiceLog() { document.getElementById('dice-log').innerHTML = ''; }
 
@@ -523,34 +565,30 @@ function logAction(title, message) {
     logEntry.dataset.copytext = `${title}\n${message}`;
     logEntry.innerHTML = `<div class="log-header-row"><div style="font-weight:bold; color:var(--bonus-color);">${title}</div><button class="btn-copy-log" onclick="copyLogEntry(this)">📋</button></div><div style="font-size: 0.9em; margin-top:5px;">${message}</div>`;
     document.getElementById('dice-log').prepend(logEntry);
-    if (document.getElementById('dice-panel-content').style.display === 'none') toggleDicePanel();
+    const dicePanel = document.getElementById('dice-panel');
+    if (dicePanel && dicePanel.classList.contains('collapsed')) {
+        togglePanel('dice-panel');
+    }
 }
 
 // ----------------------------------------------------
-// ระบบเสียงเต๋าและลูกเต๋า 3D (เพิ่มระบบปลดล็อคเสียง iOS)
+// ระบบเสียงเต๋าและลูกเต๋า 3D (Audio Context Unlocker)
 // ----------------------------------------------------
 let audioCtx = null;
 let audioUnlocked = false;
 
-// ฟังก์ชันปลดล็อค Audio API สำหรับ iOS Safari (บังคับกดจอ 1 ครั้งถึงจะมีเสียง)
 function unlockAudio() {
     if (audioUnlocked) return;
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    
-    // สร้างเสียงเงียบเพื่อปลดล็อคอย่างสมบูรณ์
     const buffer = audioCtx.createBuffer(1, 1, 22050);
     const source = audioCtx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(audioCtx.destination);
-    source.start(0);
-    
+    source.buffer = buffer; source.connect(audioCtx.destination); source.start(0);
     audioUnlocked = true;
     document.removeEventListener('touchstart', unlockAudio);
     document.removeEventListener('click', unlockAudio);
 }
 
-// ดักจับการแตะหน้าจอครั้งแรกเพื่อปลดล็อคเสียง
 document.addEventListener('touchstart', unlockAudio, { once: true });
 document.addEventListener('click', unlockAudio, { once: true });
 
@@ -624,7 +662,11 @@ function rollD20(name, modifierStr) {
         logEntry.dataset.copytext = `🎲 ทอยเต๋า: ${name.replace(/<[^>]*>?/gm, '')}\nหน้าเต๋า: ${diceShow} ${critPlain}\nModifier: ${modifier >= 0 ? '+'+modifier : modifier}\nTotal: ${total}`;
         logEntry.innerHTML = `<div class="log-header-row"><div style="font-weight:bold;">${name}${modeText}</div><button class="btn-copy-log" onclick="copyLogEntry(this)">📋</button></div><div style="font-size:0.85em; color:var(--text-muted);">เต๋า: ${diceShow} ${critText} <br> Mod: ${modifier >= 0 ? '+'+modifier : modifier}</div><div style="font-size: 1.4em; font-weight: bold; color: var(--bonus-color); margin-top: 5px; text-shadow: 1px 1px 2px #000;">Total: ${total}</div>`;
         document.getElementById('dice-log').prepend(logEntry);
-        if (document.getElementById('dice-panel-content').style.display === 'none') toggleDicePanel();
+        
+        const dicePanel = document.getElementById('dice-panel');
+        if (dicePanel && dicePanel.classList.contains('collapsed')) {
+            togglePanel('dice-panel');
+        }
     });
 }
 
@@ -654,12 +696,16 @@ function rollDamage(damageStr, wpnName) {
         logEntry.dataset.copytext = `⚔️ ดาเมจ: ${wpnName}\nทอย ${count}d${sides}: [${rolls.join(', ')}]\nMod: ${mod >= 0 ? '+'+mod : mod}\nTotal Damage: ${total}`;
         logEntry.innerHTML = `<div class="log-header-row"><div style="font-weight:bold;">💥 ${wpnName} (Damage)</div><button class="btn-copy-log" onclick="copyLogEntry(this)">📋</button></div><div style="font-size:0.85em; color:var(--text-muted);">ทอย ${count}d${sides}: [${rolls.join(', ')}] <br> Mod: ${mod >= 0 ? '+'+mod : mod}</div><div style="font-size: 1.4em; font-weight: bold; color: var(--red-twd-light); margin-top: 5px; text-shadow: 1px 1px 2px #000;">Total Damage: ${total}</div>`;
         document.getElementById('dice-log').prepend(logEntry);
-        if (document.getElementById('dice-panel-content').style.display === 'none') toggleDicePanel();
+        
+        const dicePanel = document.getElementById('dice-panel');
+        if (dicePanel && dicePanel.classList.contains('collapsed')) {
+            togglePanel('dice-panel');
+        }
     });
 }
 
 // ====================================================
-// 8. Event Listener ควบคุมทุกการกระทำ
+// 9. Event Listener ควบคุมทุกการกระทำ
 // ====================================================
 document.querySelectorAll('input, select, textarea').forEach(el => {
     el.addEventListener('input', (e) => {
@@ -718,5 +764,6 @@ document.getElementById('role').addEventListener('change', (e) => {
 
 // เริ่มการทำงานครั้งแรก
 initWeapons();
+loadUIState(); // โหลดสถานะการย่อ/ขยายหน้าต่าง
 loadLocalData(); 
 updateCalculations();
