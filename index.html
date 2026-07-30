@@ -383,44 +383,13 @@
                 <div class="text-muted" style="text-align:center; margin-top:10px;">คลิกที่ค่าสถานะหรืออาวุธเพื่อทอยเต๋า</div>
             </div>
         </div>
-        <!-- ปุ่มดึงขยายหน้าต่าง (จะซ่อนอัตโนมัติบนมือถือ) -->
         <div class="resize-handle" id="dice-resize-handle"></div>
     </div>
 
-    <!-- 3D Dice Overlay -->
+    <!-- 🛑 3D Dice Overlay (สร้างใหม่ลบใหม่ 100% เลี่ยงบั๊กค้าง) -->
     <div id="dice-3d-overlay" class="hidden-overlay">
-        <div class="dice-container" id="dice-container">
-            <div class="dice-3d-wrapper" id="dice-wrapper-1">
-                <svg viewBox="0 0 100 100" class="dice-svg">
-                    <polygon points="50,20 15,70 85,70" fill="#b22222" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="50,0 0,25 50,20" fill="#ff6666" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="50,0 100,25 50,20" fill="#d00000" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="0,25 15,70 50,20" fill="#ff4d4d" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="100,25 85,70 50,20" fill="#cc0000" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="0,25 0,75 15,70" fill="#e60000" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="100,25 100,75 85,70" fill="#7a0000" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="0,75 50,100 15,70" fill="#990000" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="100,75 50,100 85,70" fill="#550000" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="15,70 50,100 85,70" fill="#8b0000" stroke="#ff8888" stroke-width="1.5"/>
-                </svg>
-                <div class="dice-result-text" id="dice-result-1">20</div>
-            </div>
-            <div class="dice-3d-wrapper" id="dice-wrapper-2" style="display: none;">
-                <svg viewBox="0 0 100 100" class="dice-svg">
-                    <polygon points="50,20 15,70 85,70" fill="#b22222" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="50,0 0,25 50,20" fill="#ff6666" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="50,0 100,25 50,20" fill="#d00000" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="0,25 15,70 50,20" fill="#ff4d4d" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="100,25 85,70 50,20" fill="#cc0000" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="0,25 0,75 15,70" fill="#e60000" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="100,25 100,75 85,70" fill="#7a0000" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="0,75 50,100 15,70" fill="#990000" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="100,75 50,100 85,70" fill="#550000" stroke="#ff8888" stroke-width="1.5"/>
-                    <polygon points="15,70 50,100 85,70" fill="#8b0000" stroke="#ff8888" stroke-width="1.5"/>
-                </svg>
-                <div class="dice-result-text" id="dice-result-2">20</div>
-            </div>
-        </div>
+        <!-- ลูกเต๋าจะถูกสร้างโดยอัตโนมัติด้วย Javascript ตรงนี้ -->
+        <div class="dice-container" id="dice-container"></div>
     </div>
 
     <div id="yt-bgm-container"></div>
