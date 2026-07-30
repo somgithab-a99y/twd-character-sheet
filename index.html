@@ -94,37 +94,37 @@
                     <div class="panel-content stats-grid">
                         <div class="stat-box stat-str" data-stat="str">
                             <label>💪 Strength</label>
-                            <div class="stat-mod clickable-roll" id="str-mod" onclick="rollD20('💪 Strength', this.textContent)">+2</div>
+                            <div class="stat-mod clickable-roll" id="str-mod" onclick="rollD20('💪 Strength', this.textContent, 'str')">+2</div>
                             <div class="stat-total">Total: <span id="str-total">15</span></div>
                             <div class="stat-base">Base: <input type="number" id="str-score" value="15" inputmode="numeric" pattern="[0-9]*"></div>
                         </div>
                         <div class="stat-box stat-dex" data-stat="dex">
                             <label>🏃 Dexterity</label>
-                            <div class="stat-mod clickable-roll" id="dex-mod" onclick="rollD20('🏃 Dexterity', this.textContent)">+2</div>
+                            <div class="stat-mod clickable-roll" id="dex-mod" onclick="rollD20('🏃 Dexterity', this.textContent, 'dex')">+2</div>
                             <div class="stat-total">Total: <span id="dex-total">14</span></div>
                             <div class="stat-base">Base: <input type="number" id="dex-score" value="14" inputmode="numeric" pattern="[0-9]*"></div>
                         </div>
                         <div class="stat-box stat-con" data-stat="con">
                             <label>🛡️ Constitution</label>
-                            <div class="stat-mod clickable-roll" id="con-mod" onclick="rollD20('🛡️ Constitution', this.textContent)">+1</div>
+                            <div class="stat-mod clickable-roll" id="con-mod" onclick="rollD20('🛡️ Constitution', this.textContent, 'con')">+1</div>
                             <div class="stat-total">Total: <span id="con-total">13</span></div>
                             <div class="stat-base">Base: <input type="number" id="con-score" value="13" inputmode="numeric" pattern="[0-9]*"></div>
                         </div>
                         <div class="stat-box stat-int" data-stat="int">
                             <label>🧠 Intelligence</label>
-                            <div class="stat-mod clickable-roll" id="int-mod" onclick="rollD20('🧠 Intelligence', this.textContent)">+1</div>
+                            <div class="stat-mod clickable-roll" id="int-mod" onclick="rollD20('🧠 Intelligence', this.textContent, 'int')">+1</div>
                             <div class="stat-total">Total: <span id="int-total">12</span></div>
                             <div class="stat-base">Base: <input type="number" id="int-score" value="12" inputmode="numeric" pattern="[0-9]*"></div>
                         </div>
                         <div class="stat-box stat-wis" data-stat="wis">
                             <label>👁️ Wisdom</label>
-                            <div class="stat-mod clickable-roll" id="wis-mod" onclick="rollD20('👁️ Wisdom', this.textContent)">+0</div>
+                            <div class="stat-mod clickable-roll" id="wis-mod" onclick="rollD20('👁️ Wisdom', this.textContent, 'wis')">+0</div>
                             <div class="stat-total">Total: <span id="wis-total">10</span></div>
                             <div class="stat-base">Base: <input type="number" id="wis-score" value="10" inputmode="numeric" pattern="[0-9]*"></div>
                         </div>
                         <div class="stat-box stat-cha" data-stat="cha">
                             <label>🗣️ Charisma</label>
-                            <div class="stat-mod clickable-roll" id="cha-mod" onclick="rollD20('🗣️ Charisma', this.textContent)">-1</div>
+                            <div class="stat-mod clickable-roll" id="cha-mod" onclick="rollD20('🗣️ Charisma', this.textContent, 'cha')">-1</div>
                             <div class="stat-total">Total: <span id="cha-total">8</span></div>
                             <div class="stat-base">Base: <input type="number" id="cha-score" value="8" inputmode="numeric" pattern="[0-9]*"></div>
                         </div>
@@ -164,7 +164,7 @@
                                 <label>👟 ความเร็ว</label>
                                 <div class="val text-highlight" id="speed">30 ft.</div>
                             </div>
-                            <div class="combat-box clickable-roll" id="initiative" onclick="rollD20('⚡ Initiative', this.textContent)">
+                            <div class="combat-box clickable-roll" id="initiative" onclick="rollD20('⚡ Initiative', this.textContent, 'dex')">
                                 <label>⚡ เริ่มก่อน</label>
                                 <div class="val text-highlight">+0</div>
                             </div>
@@ -386,11 +386,8 @@
         <div class="resize-handle" id="dice-resize-handle"></div>
     </div>
 
-    <!-- 🛑 3D Dice Overlay (สร้างใหม่ลบใหม่ 100% เลี่ยงบั๊กค้าง) -->
-    <div id="dice-3d-overlay" class="hidden-overlay">
-        <div class="dice-container" id="dice-container"></div>
-    </div>
-
+    <!-- ลบ div ลูกเต๋าเก่าทิ้งหมด JS จะทำหน้าที่สร้างใหม่แบบ 100% -->
+    
     <div id="yt-bgm-container"></div>
     <script src="scriptTWD.js"></script>
 </body>
