@@ -425,12 +425,11 @@ let dragStartX, dragStartY, initialLeft, initialTop;
 let resizeStartW, resizeStartH, resizeStartX, resizeStartY;
 let panelWasDragged = false;
 
-// ฟังก์ชันสำหรับเปิดหน้าต่างลูกเต๋าอัตโนมัติหากมันถูกซ่อนอยู่
+// ฟังก์ชันเปิดหน้าต่างเต๋าอัตโนมัติเมื่อกดทอย
 function openDicePanel() {
     if (dicePanel.classList.contains('collapsed')) {
         dicePanel.classList.remove('collapsed');
-        document.getElementById('dice-panel-title').innerHTML = '🎲 ทอยเต๋า (แสดง)';
-        dicePanel.style.height = dicePanel.dataset.oldHeight || 'auto';
+        saveUIState();
     }
 }
 
@@ -457,6 +456,7 @@ function onDrag(e) {
     if (Math.abs(dx) > 3 || Math.abs(dy) > 3) panelWasDragged = true;
 
     let newLeft = initialLeft + dx; let newTop = initialTop + dy;
+    // ป้องกันหน้าต่างหลุดขอบจอ (ปรับ offsetWidth/Height อัตโนมัติแม้ตอนเป็นไอคอน)
     newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - dicePanel.offsetWidth));
     newTop = Math.max(0, Math.min(newTop, window.innerHeight - dicePanel.offsetHeight));
     dicePanel.style.left = newLeft + 'px'; dicePanel.style.top = newTop + 'px';
@@ -502,18 +502,11 @@ function stopResize() {
 diceHeader.addEventListener('mousedown', startDrag); diceHeader.addEventListener('touchstart', startDrag, { passive: false });
 diceResize.addEventListener('mousedown', startResize); diceResize.addEventListener('touchstart', startResize, { passive: false });
 
+// กดที่ Header เพื่อพับหรือกางหน้าต่าง
 diceHeader.addEventListener('click', (e) => {
     if (e.target.closest('button') || e.target.closest('select')) return;
     if (!panelWasDragged) {
-        dicePanel.classList.toggle('collapsed');
-        const title = document.getElementById('dice-panel-title');
-        if (dicePanel.classList.contains('collapsed')) {
-            title.innerHTML = '🎲 ทอยเต๋า (ซ่อน)';
-            dicePanel.dataset.oldHeight = dicePanel.style.height; dicePanel.style.height = 'auto'; 
-        } else {
-            title.innerHTML = '🎲 ทอยเต๋า (แสดง)';
-            dicePanel.style.height = dicePanel.dataset.oldHeight || 'auto'; 
-        }
+        togglePanel('dice-panel');
     }
 });
 
@@ -521,7 +514,7 @@ diceHeader.addEventListener('click', (e) => {
 // 9. ระบบลอจิกทอยเต๋า และแอคชั่น
 // ====================================================
 function rollD20(name, modifierStr) {
-    openDicePanel(); // เปิดหน้าต่างอัตโนมัติหากพับอยู่
+    openDicePanel(); 
     const modifier = parseInt(modifierStr) || 0;
     const mode = document.querySelector('input[name="roll_mode"]:checked').value;
     const r1 = Math.floor(Math.random() * 20) + 1; const r2 = Math.floor(Math.random() * 20) + 1;
@@ -546,7 +539,7 @@ function rollD20(name, modifierStr) {
 
 function rollDamage(damageStr, wpnName) {
     if (damageStr === '-') return;
-    openDicePanel(); // เปิดหน้าต่างอัตโนมัติหากพับอยู่
+    openDicePanel();
     const match = damageStr.match(/(\d+)d(\d+)\s*([+-]\s*\d+)?/i);
     const logEntry = document.createElement('div'); logEntry.className = 'log-entry';
 
@@ -575,7 +568,7 @@ function rollDamage(damageStr, wpnName) {
 }
 
 function logAction(title, message) {
-    openDicePanel(); // เปิดหน้าต่างอัตโนมัติ
+    openDicePanel();
     const logEntry = document.createElement('div'); logEntry.className = 'log-entry';
     logEntry.dataset.copytext = `${title}\n${message}`;
     logEntry.innerHTML = `<div class="log-header-row"><div style="font-weight:bold; color:var(--bonus-color);">${title}</div><button class="btn-copy-log" onclick="copyLogEntry(this)">📋</button></div><div style="font-size: 0.9em; margin-top:5px;">${message}</div>`;
