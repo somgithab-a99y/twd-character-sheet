@@ -112,7 +112,6 @@ function saveUIState() {
     const state = {};
     panels.forEach(p => { state[p.id] = p.classList.contains('collapsed'); });
     
-    // บันทึกสถานะหน้าต่างลูกเต๋าต่างหาก
     const dp = document.getElementById('dice-panel');
     if (dp) {
         state['dice_collapsed'] = dp.classList.contains('collapsed');
@@ -133,25 +132,20 @@ function loadUIState() {
                     else p.classList.remove('collapsed'); 
                 }
             }
-            // โหลดสถานะหน้าต่างลูกเต๋า
             const dp = document.getElementById('dice-panel');
             if (dp) {
-                if (state['dice_collapsed']) dp.classList.add('collapsed'); 
-                else dp.classList.remove('collapsed');
-                if (state['dice_hidden']) dp.classList.add('hidden-panel'); 
-                else dp.classList.remove('hidden-panel');
+                if (state['dice_collapsed']) dp.classList.add('collapsed'); else dp.classList.remove('collapsed');
+                if (state['dice_hidden']) dp.classList.add('hidden-panel'); else dp.classList.remove('hidden-panel');
             }
         }
     } catch(e) {}
 }
 
-// ฟังก์ชันปิดหน้าต่างเต๋าให้หายวับ 100%
 function closeDicePanel() {
     document.getElementById('dice-panel').classList.add('hidden-panel');
     saveUIState();
 }
 
-// ฟังก์ชันเปิดหน้าต่างเต๋าให้กลับมาโชว์อีกครั้ง
 function showDicePanel() {
     const panel = document.getElementById('dice-panel');
     panel.classList.remove('hidden-panel');
@@ -159,7 +153,6 @@ function showDicePanel() {
     saveUIState();
 }
 
-// บังคับให้แสดงผลอัตโนมัติเมื่อกดทอยลูกเต๋า
 function openDicePanelAuto() {
     const panel = document.getElementById('dice-panel');
     panel.classList.remove('hidden-panel'); 
@@ -419,7 +412,7 @@ function toggleBGM() {
 }
 
 // ====================================================
-// 8. ระบบเสียงเต๋าและลูกเต๋า 3D (แก้บั๊กค้างบน iOS)
+// 8. ระบบเสียงเต๋าและลูกเต๋า 3D (The iOS 16 GPU Killer Fix)
 // ====================================================
 let audioCtx = null; let audioUnlocked = false;
 function unlockAudio() {
@@ -452,49 +445,76 @@ document.getElementById('dice-color-select').addEventListener('change', (e) => {
 function play3DDiceAnimation(rolls, finalIndex, callback) {
     playDiceSound(); 
     const overlay = document.getElementById('dice-3d-overlay');
-    const w1 = document.getElementById('dice-wrapper-1'); const r1 = document.getElementById('dice-result-1');
-    const w2 = document.getElementById('dice-wrapper-2'); const r2 = document.getElementById('dice-result-2');
+    const w1 = document.getElementById('dice-wrapper-1'); 
+    const r1 = document.getElementById('dice-result-1');
+    const w2 = document.getElementById('dice-wrapper-2'); 
+    const r2 = document.getElementById('dice-result-2');
 
+    // 🔴 1. เปิดระบบทุกอย่างกลับมาทำงาน (Reset State)
+    overlay.style.display = 'flex'; // บังคับกางจอใหม่
     overlay.classList.remove('hidden-overlay');
+    
+    w1.style.display = 'block';
+    w1.style.transformStyle = 'preserve-3d'; // คืนค่า 3D ให้ WebKit
     w1.style.animation = 'none'; r1.style.animation = 'none'; r1.style.opacity = '0'; r1.className = 'dice-result-text'; r1.textContent = rolls[0];
 
     if (rolls.length > 1) {
-        w2.style.display = 'block'; w2.style.animation = 'none'; r2.style.animation = 'none'; r2.style.opacity = '0'; r2.className = 'dice-result-text'; r2.textContent = rolls[1];
+        w2.style.display = 'block'; 
+        w2.style.transformStyle = 'preserve-3d';
+        w2.style.animation = 'none'; r2.style.animation = 'none'; r2.style.opacity = '0'; r2.className = 'dice-result-text'; r2.textContent = rolls[1];
         if (finalIndex === 0) { r1.classList.add('adv-highlight'); r2.classList.add('dis-highlight'); } 
         else { r2.classList.add('adv-highlight'); r1.classList.add('dis-highlight'); }
-    } else { w2.style.display = 'none'; }
+    } else { 
+        w2.style.display = 'none'; 
+    }
 
-    // 🛑 iOS BUG FIX: ล้าง Transform และ Animation เก่าทิ้งเพื่อป้องกันการค้าง
+    void overlay.offsetWidth; // บังคับให้เบราว์เซอร์วาดหน้าจอใหม่ทันที
+    
+    // เริ่มอนิเมชัน
+    w1.style.animation = 'tumbling 1.2s cubic-bezier(0.1, 0.8, 0.2, 1) forwards';
+    if (rolls.length > 1) w2.style.animation = 'tumbling-delay 1.3s cubic-bezier(0.1, 0.8, 0.2, 1) forwards';
+
     let animationDone = false;
+
+    // 🔴 2. ฟังก์ชัน "ทำลายทิ้ง" (The iOS GPU Killer)
     const hideOverlay = () => {
         if(animationDone) return;
         animationDone = true;
         
-        // เคลียร์ Property ทั้งหมดที่อาจจะทำให้ GPU ค้าง
+        // ทุบทิ้ง Property ทุกตัวที่อาจจะทำให้ GPU ค้าง
         w1.style.animation = 'none'; w1.style.transform = 'none';
-        w2.style.animation = 'none'; w2.style.transform = 'none';
-        r1.style.animation = 'none'; r1.style.transform = 'none'; r1.style.opacity = '0';
-        r2.style.animation = 'none'; r2.style.transform = 'none'; r2.style.opacity = '0';
+        w1.style.transformStyle = 'flat'; // ปิด 3D ทันที
+        w1.style.display = 'none'; // ซ่อน Wrapper ทิ้ง
         
+        w2.style.animation = 'none'; w2.style.transform = 'none';
+        w2.style.transformStyle = 'flat';
+        w2.style.display = 'none';
+
+        r1.style.animation = 'none'; r1.style.opacity = '0';
+        r2.style.animation = 'none'; r2.style.opacity = '0';
+        
+        // ซ่อน Overlay 
+        overlay.style.display = 'none';
         overlay.classList.add('hidden-overlay');
+
+        // บังคับเคลียร์ RAM โดยการ Reflow หน้าจอ
+        void document.body.offsetHeight;
+
         if(callback) callback();
     };
 
-    // 🛡️ Ultimate Failsafe: หากหน้าจอค้าง ผู้เล่นสามารถแตะที่จอดำๆ เพื่อปิดเต๋าได้ทันที
+    // 🛡️ แตะหน้าจอเพื่อบังคับปิดทันที กรณีเครื่องค้าง!
     overlay.onclick = hideOverlay;
     overlay.ontouchstart = hideOverlay; 
-
-    void overlay.offsetWidth;
-    w1.style.animation = 'tumbling 1.2s cubic-bezier(0.1, 0.8, 0.2, 1) forwards';
-    if (rolls.length > 1) w2.style.animation = 'tumbling-delay 1.3s cubic-bezier(0.1, 0.8, 0.2, 1) forwards';
 
     setTimeout(() => {
         r1.style.animation = 'popNumber 0.4s ease-out forwards';
         if (rolls.length > 1) { r2.style.animation = 'popNumber 0.4s ease-out forwards'; setTimeout(() => { playDiceSound(); }, 200); }
+        // หน่วงเวลาดูผล แล้วปิด
         setTimeout(hideOverlay, 1500);
     }, 1100);
 
-    // Failsafe บังคับปิดเมื่อเกิน 3 วินาที
+    // Failsafe บังคับปิดเมื่อเกิน 3 วินาที เผื่อสคริปต์ติดบั๊ก
     setTimeout(hideOverlay, 3000);
 }
 
