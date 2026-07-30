@@ -128,7 +128,6 @@ function updateCharacterCard() {
     const roleObj = document.getElementById('role');
     const bgObj = document.getElementById('background');
 
-    // ดึงชื่อภาษาไทยคำแรกมาโชว์
     const typeText = typeObj.value !== 'none' ? typeObj.options[typeObj.selectedIndex].text.split(' ')[0] : 'ผู้รอดชีวิต';
     const roleText = roleObj.value !== 'none' ? roleObj.options[roleObj.selectedIndex].text.split(' ')[0] : 'ไร้บทบาท';
     const bgText = bgObj.value !== 'none' ? bgObj.options[bgObj.selectedIndex].text.split(' ')[0] : 'ไร้ภูมิหลัง';
@@ -140,18 +139,16 @@ function updateCharacterCard() {
     const imgEl = document.getElementById('char-portrait');
 
     if (customUrl) {
-        imgEl.src = customUrl; // ถ้าใส่ลิงก์รูปเองก็ให้โชว์รูปนั้น
+        imgEl.src = customUrl; 
     } else {
         if (typeObj.value === 'none' && roleObj.value === 'none' && bgObj.value === 'none') {
             imgEl.src = "https://placehold.co/300x400/1a1a1a/ffd700?text=Select+Survivor";
             return;
         }
 
-        // หากไม่ได้ใส่รูปเอง ระบบจะเจเนอเรตรูป TWD ให้ตามคอมโบเป๊ะๆ (126 แบบ)
         const prompt = `A portrait of a post-apocalyptic survivor in The Walking Dead, ${typeObj.value} type, ${roleObj.value} role, ${bgObj.value} background, gritty dark comic style, highly detailed`;
         const encodedPrompt = encodeURIComponent(prompt);
         
-        // สร้างรหัส Seed เฉพาะตัว เพื่อให้กลับมาใช้คอมโบเดิมแล้วได้รูปเดิมเสมอ
         const seedString = typeObj.value + roleObj.value + bgObj.value;
         let hash = 0;
         for (let i = 0; i < seedString.length; i++) hash = Math.imul(31, hash) + seedString.charCodeAt(i) | 0;
@@ -257,11 +254,11 @@ function updateCalculations() {
     });
 
     updateHealthVisuals();
-    updateCharacterCard(); // เรียกอัปเดตการ์ดภาพเสมอ
+    updateCharacterCard();
 }
 
 // ====================================================
-// 4. ระบบเซฟข้อมูลลงเครื่อง (ป้องกันโหมดส่วนตัว Private Mode)
+// 4. ระบบเซฟข้อมูลลงเครื่อง (ป้องกัน iOS Private Mode)
 // ====================================================
 const LOCAL_STORAGE_KEY = 'twd_rpg_char_data';
 
@@ -274,7 +271,7 @@ function saveLocalData() {
         });
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
     } catch (e) {
-        console.warn("Local Storage ถูกจำกัด");
+        console.warn("Local Storage ถูกจำกัด (อาจเปิดโหมดส่วนตัวอยู่)");
     }
 }
 
@@ -324,7 +321,6 @@ function getCharacterDataText() {
     let text = `=== THE WALKING DEAD RPG: CHARACTER SHEET ===\n`;
     text += `ชื่อตัวละคร: ${name}\nประเภท: ${type} | บทบาท: ${role} | เลเวล: ${level}\nภูมิหลัง: ${bg}\n`;
     
-    // ดึง URL ภาพที่ผู้เล่นใช้ (ถ้ามี) ส่งเข้า Docs ด้วย
     const customImg = document.getElementById('custom-img-url').value;
     if(customImg) text += `รูปตัวละคร: ${customImg}\n`;
 
@@ -531,9 +527,33 @@ function logAction(title, message) {
 }
 
 // ----------------------------------------------------
-// ระบบเสียงเต๋าและลูกเต๋า 3D
+// ระบบเสียงเต๋าและลูกเต๋า 3D (เพิ่มระบบปลดล็อคเสียง iOS)
 // ----------------------------------------------------
 let audioCtx = null;
+let audioUnlocked = false;
+
+// ฟังก์ชันปลดล็อค Audio API สำหรับ iOS Safari (บังคับกดจอ 1 ครั้งถึงจะมีเสียง)
+function unlockAudio() {
+    if (audioUnlocked) return;
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    // สร้างเสียงเงียบเพื่อปลดล็อคอย่างสมบูรณ์
+    const buffer = audioCtx.createBuffer(1, 1, 22050);
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioCtx.destination);
+    source.start(0);
+    
+    audioUnlocked = true;
+    document.removeEventListener('touchstart', unlockAudio);
+    document.removeEventListener('click', unlockAudio);
+}
+
+// ดักจับการแตะหน้าจอครั้งแรกเพื่อปลดล็อคเสียง
+document.addEventListener('touchstart', unlockAudio, { once: true });
+document.addEventListener('click', unlockAudio, { once: true });
+
 function playDiceSound() {
     const type = document.getElementById('dice-sound-select').value;
     if (type === 'none') return;
