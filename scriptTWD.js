@@ -73,18 +73,13 @@ let currentRace = 'none';
 let currentBg = 'none';
 
 // ==========================================
-// 2. ระบบ UI (หน้าต่างย่อ-ขยาย Accordion)
+// 2. ระบบ UI (หน้าต่างย่อ-ขยาย พับหมวดหมู่)
 // ==========================================
 let allCollapsed = false;
-
 function togglePanel(panelId) {
     const panel = document.getElementById(panelId);
-    if (panel) {
-        panel.classList.toggle('collapsed');
-        saveUIState();
-    }
+    if (panel) { panel.classList.toggle('collapsed'); saveUIState(); }
 }
-
 function toggleAllPanels() {
     allCollapsed = !allCollapsed;
     document.querySelectorAll('.collapsible-panel').forEach(panel => {
@@ -93,14 +88,12 @@ function toggleAllPanels() {
     });
     saveUIState();
 }
-
 function saveUIState() {
     const panels = document.querySelectorAll('.collapsible-panel');
     const state = {};
     panels.forEach(p => { state[p.id] = p.classList.contains('collapsed'); });
     localStorage.setItem('twd_rpg_ui_state', JSON.stringify(state));
 }
-
 function loadUIState() {
     try {
         const stateStr = localStorage.getItem('twd_rpg_ui_state');
@@ -108,15 +101,11 @@ function loadUIState() {
             const state = JSON.parse(stateStr);
             for (const [id, isCollapsed] of Object.entries(state)) {
                 const p = document.getElementById(id);
-                if (p) {
-                    if (isCollapsed) p.classList.add('collapsed');
-                    else p.classList.remove('collapsed');
-                }
+                if (p) { if (isCollapsed) p.classList.add('collapsed'); else p.classList.remove('collapsed'); }
             }
         }
     } catch(e) {}
 }
-
 
 // ==========================================
 // 3. การสร้าง UI (อาวุธ & ทักษะ)
@@ -132,7 +121,6 @@ function initWeapons() {
         document.getElementById(`wpn-name-${slotId}`).addEventListener('input', updateCalculations);
     });
 }
-
 const skillsContainer = document.getElementById('skills-container');
 skillsData.forEach((skill, index) => {
     const row = document.createElement('div');
@@ -157,14 +145,12 @@ function updateHealthVisuals() {
     const max = parseInt(document.getElementById('max-hp').value) || 1;
     const container = document.getElementById('health-box-container');
     const percent = (current / max) * 100;
-
     container.className = 'health-box'; 
-    if (current <= 0) { container.classList.add('health-dead'); } 
-    else if (percent >= 70) { container.classList.add('health-high'); } 
-    else if (percent >= 35) { container.classList.add('health-med'); } 
-    else { container.classList.add('health-low'); }
+    if (current <= 0) container.classList.add('health-dead'); 
+    else if (percent >= 70) container.classList.add('health-high'); 
+    else if (percent >= 35) container.classList.add('health-med'); 
+    else container.classList.add('health-low');
 }
-
 document.getElementById('current-hp').addEventListener('input', updateHealthVisuals);
 document.getElementById('max-hp').addEventListener('input', updateHealthVisuals);
 
@@ -172,36 +158,25 @@ function updateCharacterCard() {
     const typeObj = document.getElementById('survivor-type');
     const roleObj = document.getElementById('role');
     const bgObj = document.getElementById('background');
-
     const typeText = typeObj.value !== 'none' ? typeObj.options[typeObj.selectedIndex].text.split(' ')[0] : 'ผู้รอดชีวิต';
     const roleText = roleObj.value !== 'none' ? roleObj.options[roleObj.selectedIndex].text.split(' ')[0] : 'ไร้บทบาท';
     const bgText = bgObj.value !== 'none' ? bgObj.options[bgObj.selectedIndex].text.split(' ')[0] : 'ไร้ภูมิหลัง';
-
-    const comboTitle = `${typeText} • ${roleText} • ${bgText}`;
-    document.getElementById('char-combo-title').textContent = comboTitle;
+    document.getElementById('char-combo-title').textContent = `${typeText} • ${roleText} • ${bgText}`;
 
     const customUrl = document.getElementById('custom-img-url').value.trim();
     const imgEl = document.getElementById('char-portrait');
-
-    if (customUrl) {
-        imgEl.src = customUrl; 
-    } else {
+    if (customUrl) { imgEl.src = customUrl; } 
+    else {
         if (typeObj.value === 'none' && roleObj.value === 'none' && bgObj.value === 'none') {
-            imgEl.src = "https://placehold.co/300x400/1a1a1a/ffd700?text=Select+Survivor";
-            return;
+            imgEl.src = "https://placehold.co/300x400/1a1a1a/ffd700?text=Select+Survivor"; return;
         }
-
         const prompt = `A portrait of a post-apocalyptic survivor in The Walking Dead, ${typeObj.value} type, ${roleObj.value} role, ${bgObj.value} background, gritty dark comic style, highly detailed`;
         const encodedPrompt = encodeURIComponent(prompt);
-        
         const seedString = typeObj.value + roleObj.value + bgObj.value;
-        let hash = 0;
-        for (let i = 0; i < seedString.length; i++) hash = Math.imul(31, hash) + seedString.charCodeAt(i) | 0;
-        
+        let hash = 0; for (let i = 0; i < seedString.length; i++) hash = Math.imul(31, hash) + seedString.charCodeAt(i) | 0;
         imgEl.src = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=300&height=400&nologo=true&seed=${Math.abs(hash)}`;
     }
 }
-
 document.getElementById('custom-img-url').addEventListener('input', updateCharacterCard);
 
 function updateCalculations() {
@@ -209,44 +184,33 @@ function updateCalculations() {
     const profBonus = Math.ceil(level / 4) + 1;
     document.getElementById('prof-bonus').textContent = `+${profBonus}`;
 
-    const role = document.getElementById('role').value;
-    const currentRole = classData[role] || classData['none'];
-    const race = document.getElementById('survivor-type').value;
-    const currentRaceData = raceBonuses[race] || raceBonuses['none'];
-    const bgKey = document.getElementById('background').value;
-    const currentBgData = backgroundData[bgKey] || backgroundData['none'];
+    const role = document.getElementById('role').value; const currentRole = classData[role] || classData['none'];
+    const race = document.getElementById('survivor-type').value; const currentRaceData = raceBonuses[race] || raceBonuses['none'];
+    const bgKey = document.getElementById('background').value; const currentBgData = backgroundData[bgKey] || backgroundData['none'];
     
     document.getElementById('trait-description').innerHTML = currentRaceData.desc;
     document.getElementById('role-description').innerHTML = currentRole.desc;
     document.getElementById('bg-description').innerHTML = currentBgData.desc;
 
     let baseSpeed = currentRaceData.speed;
-    const modifiers = {};
-    let totalStr = 10;
-
+    const modifiers = {}; let totalStr = 10;
     abilities.forEach(stat => {
         const baseVal = parseInt(document.getElementById(`${stat}-score`).value) || 10;
         const raceMod = currentRaceData.stats[stat] || 0;
         const totalScore = baseVal + raceMod;
         if(stat === 'str') totalStr = totalScore;
-        
         let mod = Math.floor((totalScore - 10) / 2);
         modifiers[stat] = mod;
-
         document.getElementById(`${stat}-total`).textContent = totalScore;
         document.getElementById(`${stat}-mod`).textContent = (mod >= 0 ? '+' : '') + mod;
     });
 
     document.getElementById('initiative').textContent = (modifiers['dex'] >= 0 ? '+' : '') + modifiers['dex'];
 
-    const armorKey = document.getElementById('armor-select').value;
-    const armor = armorData[armorKey];
+    const armorKey = document.getElementById('armor-select').value; const armor = armorData[armorKey];
     const hasShield = document.getElementById('shield-check').checked;
-    
-    let ac = armor.baseAc;
-    let dexBonus = modifiers['dex'];
+    let ac = armor.baseAc; let dexBonus = modifiers['dex'];
     if (dexBonus > armor.maxDex) dexBonus = armor.maxDex;
-    
     if (armor.type === 'heavy') ac += 0; else ac += dexBonus;
     if (hasShield) ac += 2;
     document.getElementById('ac-display').textContent = ac;
@@ -270,21 +234,16 @@ function updateCalculations() {
     });
 
     [1, 2, 3].forEach(slotId => {
-        const wpnKey = document.getElementById(`wpn-select-${slotId}`).value;
-        const wpn = weaponData[wpnKey];
+        const wpnKey = document.getElementById(`wpn-select-${slotId}`).value; const wpn = weaponData[wpnKey];
         const customName = document.getElementById(`wpn-name-${slotId}`).value.trim();
         const displayWpnName = customName ? `${customName} (${wpn.name})` : wpn.name;
 
         let ammoType = '';
-        if (wpnKey === 'light-crossbow') ammoType = 'bolt';
-        else if (wpnKey === 'hand-crossbow') ammoType = 'pistol';
-        else if (wpnKey === 'heavy-crossbow') ammoType = 'heavy';
+        if (wpnKey === 'light-crossbow') ammoType = 'bolt'; else if (wpnKey === 'hand-crossbow') ammoType = 'pistol'; else if (wpnKey === 'heavy-crossbow') ammoType = 'heavy';
 
         let isProficient = (currentRole.wpnProf.includes(wpn.type) || currentRole.wpnProf.includes(wpnKey));
         let atkMod = 0;
-        if (wpn.stat === 'str') atkMod = modifiers['str'];
-        else if (wpn.stat === 'dex') atkMod = modifiers['dex'];
-        else if (wpn.stat === 'finesse') atkMod = Math.max(modifiers['str'], modifiers['dex']);
+        if (wpn.stat === 'str') atkMod = modifiers['str']; else if (wpn.stat === 'dex') atkMod = modifiers['dex']; else if (wpn.stat === 'finesse') atkMod = Math.max(modifiers['str'], modifiers['dex']);
 
         let totalAtk = atkMod + (isProficient ? profBonus : 0);
         let atkStr = (totalAtk >= 0 ? '+' : '') + totalAtk;
@@ -297,27 +256,21 @@ function updateCalculations() {
         document.getElementById(`wpn-dmg-${slotId}`).onclick = () => rollDamage(finalDmgStr, displayWpnName);
         document.getElementById(`wpn-prop-${slotId}`).textContent = wpn.props;
     });
-
-    updateHealthVisuals();
-    updateCharacterCard();
+    updateHealthVisuals(); updateCharacterCard();
 }
 
 // ====================================================
-// 5. ระบบเซฟข้อมูลลงเครื่อง (ป้องกัน iOS Private Mode)
+// 5. ระบบเซฟข้อมูล (Private Mode) & ซิงก์ (Cloud)
 // ====================================================
 const LOCAL_STORAGE_KEY = 'twd_rpg_char_data';
-
 function saveLocalData() {
     try {
         const elements = document.querySelectorAll('input, select, textarea');
         const data = {};
-        elements.forEach(el => {
-            if (el.id) data[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
-        });
+        elements.forEach(el => { if (el.id) data[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value; });
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
     } catch (e) {}
 }
-
 function loadLocalData() {
     try {
         const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -325,276 +278,99 @@ function loadLocalData() {
             const data = JSON.parse(saved);
             for (const key in data) {
                 const el = document.getElementById(key);
-                if (el) {
-                    if (el.type === 'checkbox' || el.type === 'radio') el.checked = data[key];
-                    else el.value = data[key];
-                }
+                if (el) { if (el.type === 'checkbox' || el.type === 'radio') el.checked = data[key]; else el.value = data[key]; }
             }
             proficiencies.clear();
-            skillsData.forEach((skill, index) => {
-                if (document.getElementById(`skill-${index}`).checked) proficiencies.add(index);
-            });
+            skillsData.forEach((skill, index) => { if (document.getElementById(`skill-${index}`).checked) proficiencies.add(index); });
             updateCalculations();
         }
     } catch (e) {}
 }
-
 function resetLocalData() {
-    if (confirm("⚠️ ต้องการล้างข้อมูลทั้งหมด และเริ่มใหม่ใช่หรือไม่?")) {
+    if (confirm("⚠️ ล้างข้อมูลทั้งหมด และเริ่มใหม่ใช่หรือไม่?")) {
         try { localStorage.removeItem(LOCAL_STORAGE_KEY); localStorage.removeItem('twd_rpg_ui_state'); } catch (e) {}
         location.reload(); 
     }
 }
 
-// ====================================================
-// 6. ระบบซิงก์ข้อมูลไป Google Docs
-// ====================================================
 let syncTimer = null;
-
 function getCharacterDataText() {
     const name = document.getElementById('char-name').value || 'ไม่ระบุชื่อ';
-    const typeObj = document.getElementById('survivor-type');
-    const type = typeObj.options[typeObj.selectedIndex].text;
-    const roleObj = document.getElementById('role');
-    const role = roleObj.options[roleObj.selectedIndex].text;
-    const bgObj = document.getElementById('background');
-    const bg = bgObj.value !== 'none' ? bgObj.options[bgObj.selectedIndex].text : '-';
+    const typeObj = document.getElementById('survivor-type'); const type = typeObj.options[typeObj.selectedIndex].text;
+    const roleObj = document.getElementById('role'); const role = roleObj.options[roleObj.selectedIndex].text;
+    const bgObj = document.getElementById('background'); const bg = bgObj.value !== 'none' ? bgObj.options[bgObj.selectedIndex].text : '-';
     const level = document.getElementById('level').value;
 
-    let text = `=== THE WALKING DEAD RPG: CHARACTER SHEET ===\n`;
-    text += `ชื่อตัวละคร: ${name}\nประเภท: ${type} | บทบาท: ${role} | เลเวล: ${level}\nภูมิหลัง: ${bg}\n`;
-    
+    let text = `=== THE WALKING DEAD RPG: CHARACTER SHEET ===\nชื่อตัวละคร: ${name}\nประเภท: ${type} | บทบาท: ${role} | เลเวล: ${level}\nภูมิหลัง: ${bg}\n`;
     const customImg = document.getElementById('custom-img-url').value;
-    if(customImg) text += `รูปตัวละคร: ${customImg}\n`;
-
-    text += `---------------------------------------------\n`;
-    
-    const currentHp = document.getElementById('current-hp').value;
-    const maxHp = document.getElementById('max-hp').value;
-    const ac = document.getElementById('ac-display').textContent;
-    const speed = document.getElementById('speed').textContent;
-    const init = document.getElementById('initiative').textContent;
-
-    text += `[สถานะการต่อสู้]\nHP: ${currentHp} / ${maxHp} | AC: ${ac} | Speed: ${speed} | Initiative: ${init}\n`;
-    text += `---------------------------------------------\n`;
-
-    text += `[ค่าความสามารถ]\n`;
-    abilities.forEach(stat => {
-        const total = document.getElementById(`${stat}-total`).textContent;
-        const mod = document.getElementById(`${stat}-mod`).textContent;
-        text += `${stat.toUpperCase()}: ${total} (${mod})\n`;
-    });
-    text += `---------------------------------------------\n`;
-
-    text += `[ความชำนาญ Skills]\n`;
-    skillsData.forEach((skill, index) => {
-        if (document.getElementById(`skill-${index}`).checked) {
-            const mod = document.getElementById(`skill-mod-${index}`).textContent;
-            text += `★ ${skill.name} ${mod}\n`;
-        }
-    });
-    text += `---------------------------------------------\n`;
-
-    const armorObj = document.getElementById('armor-select');
-    const armor = armorObj.options[armorObj.selectedIndex].text;
-    const shield = document.getElementById('shield-check').checked ? 'ถือโล่ (+2 AC)' : 'ไม่ถือโล่';
-    text += `[ชุดเกราะ]\nเกราะ: ${armor} | โล่: ${shield}\n---------------------------------------------\n`;
-
-    text += `[อาวุธ]\n`;
+    if(customImg) text += `รูปตัวละคร: ${customImg}\n`; text += `---------------------------------------------\n`;
+    text += `[สถานะการต่อสู้]\nHP: ${document.getElementById('current-hp').value} / ${document.getElementById('max-hp').value} | AC: ${document.getElementById('ac-display').textContent} | Speed: ${document.getElementById('speed').textContent} | Initiative: ${document.getElementById('initiative').textContent}\n---------------------------------------------\n[ค่าความสามารถ]\n`;
+    abilities.forEach(stat => { text += `${stat.toUpperCase()}: ${document.getElementById(`${stat}-total`).textContent} (${document.getElementById(`${stat}-mod`).textContent})\n`; });
+    text += `---------------------------------------------\n[ความชำนาญ Skills]\n`;
+    skillsData.forEach((skill, index) => { if (document.getElementById(`skill-${index}`).checked) { text += `★ ${skill.name} ${document.getElementById(`skill-mod-${index}`).textContent}\n`; } });
+    text += `---------------------------------------------\n[ชุดเกราะ]\nเกราะ: ${document.getElementById('armor-select').options[document.getElementById('armor-select').selectedIndex].text} | โล่: ${document.getElementById('shield-check').checked ? 'ถือโล่ (+2 AC)' : 'ไม่ถือโล่'}\n---------------------------------------------\n[อาวุธ]\n`;
     [1, 2, 3].forEach(id => {
         const wpnObj = document.getElementById(`wpn-select-${id}`);
-        if (wpnObj.value !== 'none' || id === 1) { 
-            const name = document.getElementById(`wpn-name-${id}`).value || wpnObj.options[wpnObj.selectedIndex].text;
-            text += `Slot ${id}: ${name} | ATK: ${document.getElementById(`wpn-atk-${id}`).textContent} | DMG: ${document.getElementById(`wpn-dmg-${id}`).textContent}\n`;
-        }
+        if (wpnObj.value !== 'none' || id === 1) { text += `Slot ${id}: ${document.getElementById(`wpn-name-${id}`).value || wpnObj.options[wpnObj.selectedIndex].text} | ATK: ${document.getElementById(`wpn-atk-${id}`).textContent} | DMG: ${document.getElementById(`wpn-dmg-${id}`).textContent}\n`; }
     });
-    text += `---------------------------------------------\n`;
-
-    text += `[กระสุน]\nลูกหน้าไม้: ${document.getElementById('ammo-bolt').value} | ปืนพก: ${document.getElementById('ammo-pistol').value} | ไรเฟิล: ${document.getElementById('ammo-heavy').value}\n---------------------------------------------\n`;
-    text += `[ยุทธวิธี]\n${document.getElementById('tactics-text').value || '-'}\n\n[ช่องเก็บของ]\n${document.getElementById('inventory-text').value || '-'}\n=============================================`;
+    text += `---------------------------------------------\n[กระสุน]\nลูกหน้าไม้: ${document.getElementById('ammo-bolt').value} | ปืนพก: ${document.getElementById('ammo-pistol').value} | ไรเฟิล: ${document.getElementById('ammo-heavy').value}\n---------------------------------------------\n[ยุทธวิธี]\n${document.getElementById('tactics-text').value || '-'}\n\n[ช่องเก็บของ]\n${document.getElementById('inventory-text').value || '-'}\n=============================================`;
     return text;
 }
-
 function autoSync() {
     saveLocalData();
     const currentUrl = document.getElementById('webapp-url').value.trim() || WEB_APP_URL;
     if (currentUrl === "วาง_WEB_APP_URL_ของคุณตรงนี้" || currentUrl === "") return;
-
-    const btn = document.getElementById('btn-sync');
-    btn.innerHTML = '⏳ รออัปเดต...';
-    clearTimeout(syncTimer);
-    syncTimer = setTimeout(() => { executeSync(currentUrl); }, 2000); 
+    const btn = document.getElementById('btn-sync'); btn.innerHTML = '⏳ รออัปเดต...';
+    clearTimeout(syncTimer); syncTimer = setTimeout(() => { executeSync(currentUrl); }, 2000); 
 }
-
 function manualSync() {
-    saveLocalData();
-    const currentUrl = document.getElementById('webapp-url').value.trim() || WEB_APP_URL;
+    saveLocalData(); const currentUrl = document.getElementById('webapp-url').value.trim() || WEB_APP_URL;
     if (currentUrl === "" || currentUrl.includes("วาง_WEB_APP")) return alert("⚠️ โปรดใส่ Web App URL ก่อนครับ");
-    clearTimeout(syncTimer);
-    executeSync(currentUrl);
+    clearTimeout(syncTimer); executeSync(currentUrl);
 }
-
 function executeSync(appUrl) {
-    const btn = document.getElementById('btn-sync');
-    const originalText = '☁️ ซิงก์ (Docs)';
+    const btn = document.getElementById('btn-sync'); const originalText = '☁️ ซิงก์ (Docs)';
     btn.innerHTML = '⏳ กำลังซิงก์...'; btn.disabled = true;
-
-    fetch(appUrl, {
-        method: "POST", mode: "no-cors",
-        body: JSON.stringify({ characterData: getCharacterDataText() }),
-        headers: { "Content-Type": "text/plain;charset=utf-8" }
-    })
-    .then(() => {
-        btn.innerHTML = '✅ สำเร็จ!'; 
-        setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 2000);
-    })
-    .catch(error => {
-        btn.innerHTML = '❌ ล้มเหลว'; 
-        setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 2000);
-    });
+    fetch(appUrl, { method: "POST", mode: "no-cors", body: JSON.stringify({ characterData: getCharacterDataText() }), headers: { "Content-Type": "text/plain;charset=utf-8" } })
+    .then(() => { btn.innerHTML = '✅ สำเร็จ!'; setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 2000); })
+    .catch(error => { btn.innerHTML = '❌ ล้มเหลว'; setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 2000); });
 }
-
 function copyCharacterData() { copyTextToClipboard(getCharacterDataText(), '📋 คัดลอกข้อมูลตัวละครสำเร็จ!'); }
-
-function copyTextToClipboard(text, msg) {
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => { if(msg) alert(msg); }).catch(() => {});
-    }
-}
-function copyLogEntry(btnElement) {
-    event.stopPropagation();
-    const textToCopy = btnElement.closest('.log-entry').dataset.copytext;
-    if(textToCopy) copyTextToClipboard(textToCopy, '📋 คัดลอกผลลัพธ์ลงคลิปบอร์ดแล้ว!');
-}
+function copyTextToClipboard(text, msg) { if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => { if(msg) alert(msg); }).catch(() => {}); } }
+function copyLogEntry(btnElement) { event.stopPropagation(); const textToCopy = btnElement.closest('.log-entry').dataset.copytext; if(textToCopy) copyTextToClipboard(textToCopy, '📋 คัดลอกผลลัพธ์ลงคลิปบอร์ดแล้ว!'); }
 
 // ====================================================
-// 7. ระบบ YouTube BGM พื้นหลัง (Safari/iOS Fix)
+// 6. ระบบ YouTube BGM พื้นหลัง (Safari/iOS Fix)
 // ====================================================
 let isBgmPlaying = false;
-function extractVideoID(url) {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
-}
+function extractVideoID(url) { const match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); return (match && match[2].length === 11) ? match[2] : null; }
 function toggleBGM() {
     const urlInput = document.getElementById('bgm-url').value.trim();
-    const btn = document.getElementById('btn-bgm');
-    const container = document.getElementById('yt-bgm-container');
-
+    const btn = document.getElementById('btn-bgm'); const container = document.getElementById('yt-bgm-container');
     if (isBgmPlaying) {
-        container.innerHTML = '';
-        btn.innerHTML = '▶️ Play'; btn.classList.remove('btn-bgm-playing');
-        isBgmPlaying = false;
+        container.innerHTML = ''; btn.innerHTML = '▶️ Play'; btn.classList.remove('btn-bgm-playing'); isBgmPlaying = false;
     } else {
-        const videoId = extractVideoID(urlInput);
-        if (!videoId) return alert("⚠️ ไม่พบ ID วิดีโอ กรุณาตรวจสอบลิงก์ YouTube อีกครั้ง");
+        const videoId = extractVideoID(urlInput); if (!videoId) return alert("⚠️ ไม่พบ ID วิดีโอ กรุณาตรวจสอบลิงก์ YouTube อีกครั้ง");
         container.innerHTML = `<iframe width="200" height="200" src="https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&playsinline=1" frameborder="0" allow="autoplay; encrypted-media"></iframe>`;
-        btn.innerHTML = '⏹️ Stop'; btn.classList.add('btn-bgm-playing');
-        isBgmPlaying = true;
+        btn.innerHTML = '⏹️ Stop'; btn.classList.add('btn-bgm-playing'); isBgmPlaying = true;
     }
 }
 
 // ====================================================
-// 8. ระบบแอคชั่น, การพักผ่อน และทอยเต๋า 3D
+// 7. ระบบเสียงเต๋าและลูกเต๋า 3D (Audio Context Unlocker)
 // ====================================================
-function adjAmmo(type, amount) {
-    const input = document.getElementById(`ammo-${type}`);
-    input.value = Math.max(0, (parseInt(input.value) || 0) + amount); 
-    autoSync();
-}
-
-function rollAttack(name, modStr, ammoType) {
-    if (ammoType) {
-        const input = document.getElementById(`ammo-${ammoType}`);
-        let val = parseInt(input.value) || 0;
-        if (val <= 0) return alert(`กระสุนหมด! โจมตีด้วย ${name} ไม่ได้`);
-        input.value = val - 1;
-        logAction("⚠️ ใช้กระสุน", `ยิง ${name} (เหลือกระสุน ${input.value} นัด)`);
-        autoSync();
-    }
-    rollD20(`⚔️ โจมตี: ${name}`, modStr);
-}
-
-function shortRest() { alert("พักสั้น: ใช้ Hit Dice ฟื้น HP ได้"); autoSync(); }
-function longRest() { 
-    document.getElementById('current-hp').value = document.getElementById('max-hp').value; 
-    resetDeathSaves(); updateHealthVisuals(); alert("พักยาว: ฟื้นฟู HP กลับมาเต็ม"); autoSync(); 
-}
-
-function rollDeathSave() {
-    const roll = Math.floor(Math.random() * 20) + 1;
-    play3DDiceAnimation([roll], 0, () => {
-        const logEntry = document.createElement('div'); logEntry.className = 'log-entry';
-        let resultText = '', plainText = '';
-        if (roll >= 10) { resultText = `<span class="text-success">รอด (Success)</span>`; plainText = 'รอด'; addDeathSaveMark('success'); } 
-        else { resultText = `<span class="text-danger">ตาย (Failure)</span>`; plainText = 'ตาย'; addDeathSaveMark('failure'); }
-        logEntry.dataset.copytext = `💀 ท้าความตาย\nทอยได้: ${roll}\nผลลัพธ์: ${plainText}`;
-        logEntry.innerHTML = `<div class="log-header-row"><div style="font-weight:bold;">💀 ท้าความตาย (Death Save)</div><button class="btn-copy-log" onclick="copyLogEntry(this)">📋</button></div><div style="font-size: 1.1em; margin-top:5px;">ทอยได้ <b>${roll}</b> ➔ ${resultText}</div>`;
-        document.getElementById('dice-log').prepend(logEntry);
-        if (document.getElementById('dice-panel-content').style.display === 'none') togglePanel('dice-panel');
-    });
-}
-
-function addDeathSaveMark(type) {
-    for (let i = 1; i <= 3; i++) {
-        let cb = document.getElementById(type === 'success' ? `ds-s-${i}` : `ds-f-${i}`);
-        if (!cb.checked) { cb.checked = true; setTimeout(checkDeathSaveCondition, 100); break; }
-    }
-    autoSync();
-}
-
-function checkDeathSaveCondition() {
-    let s = [1,2,3].filter(i => document.getElementById(`ds-s-${i}`).checked).length;
-    let f = [1,2,3].filter(i => document.getElementById(`ds-f-${i}`).checked).length;
-    if (s >= 3) { alert("ตัวละครรอดชีวิตแล้ว! (Stable)"); resetDeathSaves(); } 
-    else if (f >= 3) { alert("ตัวละครเสียชีวิต... กลายเป็น Walker 🧟"); resetDeathSaves(); }
-}
-
-function resetDeathSaves() {
-    for(let i=1; i<=3; i++) { document.getElementById(`ds-s-${i}`).checked = false; document.getElementById(`ds-f-${i}`).checked = false; }
-    autoSync();
-}
-
-function toggleDicePanel() {
-    togglePanel('dice-panel');
-}
-function clearDiceLog() { document.getElementById('dice-log').innerHTML = ''; }
-
-function logAction(title, message) {
-    const logEntry = document.createElement('div'); logEntry.className = 'log-entry';
-    logEntry.dataset.copytext = `${title}\n${message}`;
-    logEntry.innerHTML = `<div class="log-header-row"><div style="font-weight:bold; color:var(--bonus-color);">${title}</div><button class="btn-copy-log" onclick="copyLogEntry(this)">📋</button></div><div style="font-size: 0.9em; margin-top:5px;">${message}</div>`;
-    document.getElementById('dice-log').prepend(logEntry);
-    const dicePanel = document.getElementById('dice-panel');
-    if (dicePanel && dicePanel.classList.contains('collapsed')) {
-        togglePanel('dice-panel');
-    }
-}
-
-// ----------------------------------------------------
-// ระบบเสียงเต๋าและลูกเต๋า 3D (Audio Context Unlocker)
-// ----------------------------------------------------
-let audioCtx = null;
-let audioUnlocked = false;
-
+let audioCtx = null; let audioUnlocked = false;
 function unlockAudio() {
     if (audioUnlocked) return;
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    const buffer = audioCtx.createBuffer(1, 1, 22050);
-    const source = audioCtx.createBufferSource();
-    source.buffer = buffer; source.connect(audioCtx.destination); source.start(0);
-    audioUnlocked = true;
-    document.removeEventListener('touchstart', unlockAudio);
-    document.removeEventListener('click', unlockAudio);
+    const buffer = audioCtx.createBuffer(1, 1, 22050); const source = audioCtx.createBufferSource(); source.buffer = buffer; source.connect(audioCtx.destination); source.start(0);
+    audioUnlocked = true; document.removeEventListener('touchstart', unlockAudio); document.removeEventListener('click', unlockAudio);
 }
-
-document.addEventListener('touchstart', unlockAudio, { once: true });
-document.addEventListener('click', unlockAudio, { once: true });
+document.addEventListener('touchstart', unlockAudio, { once: true }); document.addEventListener('click', unlockAudio, { once: true });
 
 function playDiceSound() {
-    const type = document.getElementById('dice-sound-select').value;
-    if (type === 'none') return;
+    const type = document.getElementById('dice-sound-select').value; if (type === 'none') return;
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
     const now = audioCtx.currentTime;
@@ -609,9 +385,7 @@ function playDiceSound() {
     else if (type === '3') { playClick(now, 1200, 'sine', 0.1, 0.5); playClick(now+0.12, 1500, 'sine', 0.08, 0.4); playClick(now+0.2, 1300, 'sine', 0.1, 0.3); }
 }
 
-document.getElementById('dice-color-select').addEventListener('change', (e) => {
-    document.documentElement.style.setProperty('--dice-hue', `${e.target.value}deg`);
-});
+document.getElementById('dice-color-select').addEventListener('change', (e) => { document.documentElement.style.setProperty('--dice-hue', `${e.target.value}deg`); });
 
 function play3DDiceAnimation(rolls, finalIndex, callback) {
     playDiceSound(); 
@@ -620,13 +394,10 @@ function play3DDiceAnimation(rolls, finalIndex, callback) {
     const w2 = document.getElementById('dice-wrapper-2'); const r2 = document.getElementById('dice-result-2');
 
     overlay.classList.remove('hidden-overlay');
-    w1.style.animation = 'none'; r1.style.animation = 'none'; r1.style.opacity = '0'; r1.className = 'dice-result-text';
-    r1.textContent = rolls[0];
+    w1.style.animation = 'none'; r1.style.animation = 'none'; r1.style.opacity = '0'; r1.className = 'dice-result-text'; r1.textContent = rolls[0];
 
     if (rolls.length > 1) {
-        w2.style.display = 'block';
-        w2.style.animation = 'none'; r2.style.animation = 'none'; r2.style.opacity = '0'; r2.className = 'dice-result-text';
-        r2.textContent = rolls[1];
+        w2.style.display = 'block'; w2.style.animation = 'none'; r2.style.animation = 'none'; r2.style.opacity = '0'; r2.className = 'dice-result-text'; r2.textContent = rolls[1];
         if (finalIndex === 0) { r1.classList.add('adv-highlight'); r2.classList.add('dis-highlight'); } 
         else { r2.classList.add('adv-highlight'); r1.classList.add('dis-highlight'); }
     } else { w2.style.display = 'none'; }
@@ -642,7 +413,115 @@ function play3DDiceAnimation(rolls, finalIndex, callback) {
     }, 1100);
 }
 
+// ----------------------------------------------------
+// 8. ระบบหน้าต่างทอยเต๋า ลอยได้ & ย่อขยายได้ (Draggable & Resizable)
+// ----------------------------------------------------
+const dicePanel = document.getElementById('dice-panel');
+const diceHeader = document.getElementById('dice-panel-header');
+const diceResize = document.getElementById('dice-resize-handle');
+
+let isDragging = false; let isResizing = false;
+let dragStartX, dragStartY, initialLeft, initialTop;
+let resizeStartW, resizeStartH, resizeStartX, resizeStartY;
+let panelWasDragged = false;
+
+// ฟังก์ชันสำหรับเปิดหน้าต่างลูกเต๋าอัตโนมัติหากมันถูกซ่อนอยู่
+function openDicePanel() {
+    if (dicePanel.classList.contains('collapsed')) {
+        dicePanel.classList.remove('collapsed');
+        document.getElementById('dice-panel-title').innerHTML = '🎲 ทอยเต๋า (แสดง)';
+        dicePanel.style.height = dicePanel.dataset.oldHeight || 'auto';
+    }
+}
+
+// --- ลากหน้าต่าง (Drag) ---
+function startDrag(e) {
+    if (e.target.closest('button') || e.target.closest('select')) return; 
+    isDragging = true; panelWasDragged = false;
+    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+    const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+    const rect = dicePanel.getBoundingClientRect();
+    dragStartX = clientX; dragStartY = clientY; initialLeft = rect.left; initialTop = rect.top;
+
+    dicePanel.style.left = initialLeft + 'px'; dicePanel.style.top = initialTop + 'px';
+    dicePanel.style.bottom = 'auto'; dicePanel.style.right = 'auto'; dicePanel.style.margin = '0';
+
+    document.addEventListener('mousemove', onDrag, { passive: false }); document.addEventListener('touchmove', onDrag, { passive: false });
+    document.addEventListener('mouseup', stopDrag); document.addEventListener('touchend', stopDrag);
+}
+function onDrag(e) {
+    if (!isDragging) return; e.preventDefault(); 
+    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+    const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+    const dx = clientX - dragStartX; const dy = clientY - dragStartY;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) panelWasDragged = true;
+
+    let newLeft = initialLeft + dx; let newTop = initialTop + dy;
+    newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - dicePanel.offsetWidth));
+    newTop = Math.max(0, Math.min(newTop, window.innerHeight - dicePanel.offsetHeight));
+    dicePanel.style.left = newLeft + 'px'; dicePanel.style.top = newTop + 'px';
+}
+function stopDrag() {
+    isDragging = false;
+    document.removeEventListener('mousemove', onDrag); document.removeEventListener('touchmove', onDrag);
+    document.removeEventListener('mouseup', stopDrag); document.removeEventListener('touchend', stopDrag);
+}
+
+// --- ย่อขยายหน้าต่าง (Resize) ---
+function startResize(e) {
+    isResizing = true; e.preventDefault(); e.stopPropagation();
+    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+    const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+    resizeStartX = clientX; resizeStartY = clientY;
+    resizeStartW = dicePanel.offsetWidth; resizeStartH = dicePanel.offsetHeight;
+
+    const rect = dicePanel.getBoundingClientRect();
+    dicePanel.style.left = rect.left + 'px'; dicePanel.style.top = rect.top + 'px';
+    dicePanel.style.bottom = 'auto'; dicePanel.style.right = 'auto';
+
+    document.addEventListener('mousemove', onResize, { passive: false }); document.addEventListener('touchmove', onResize, { passive: false });
+    document.addEventListener('mouseup', stopResize); document.addEventListener('touchend', stopResize);
+}
+function onResize(e) {
+    if (!isResizing) return; e.preventDefault();
+    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+    const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+    const dx = clientX - resizeStartX; const dy = clientY - resizeStartY;
+    
+    let newWidth = resizeStartW + dx; let newHeight = resizeStartH + dy;
+    newWidth = Math.max(280, Math.min(newWidth, window.innerWidth - dicePanel.offsetLeft));
+    newHeight = Math.max(200, Math.min(newHeight, window.innerHeight - dicePanel.offsetTop));
+    dicePanel.style.width = newWidth + 'px'; dicePanel.style.height = newHeight + 'px';
+}
+function stopResize() {
+    isResizing = false;
+    document.removeEventListener('mousemove', onResize); document.removeEventListener('touchmove', onResize);
+    document.removeEventListener('mouseup', stopResize); document.removeEventListener('touchend', stopResize);
+}
+
+diceHeader.addEventListener('mousedown', startDrag); diceHeader.addEventListener('touchstart', startDrag, { passive: false });
+diceResize.addEventListener('mousedown', startResize); diceResize.addEventListener('touchstart', startResize, { passive: false });
+
+diceHeader.addEventListener('click', (e) => {
+    if (e.target.closest('button') || e.target.closest('select')) return;
+    if (!panelWasDragged) {
+        dicePanel.classList.toggle('collapsed');
+        const title = document.getElementById('dice-panel-title');
+        if (dicePanel.classList.contains('collapsed')) {
+            title.innerHTML = '🎲 ทอยเต๋า (ซ่อน)';
+            dicePanel.dataset.oldHeight = dicePanel.style.height; dicePanel.style.height = 'auto'; 
+        } else {
+            title.innerHTML = '🎲 ทอยเต๋า (แสดง)';
+            dicePanel.style.height = dicePanel.dataset.oldHeight || 'auto'; 
+        }
+    }
+});
+
+// ====================================================
+// 9. ระบบลอจิกทอยเต๋า และแอคชั่น
+// ====================================================
 function rollD20(name, modifierStr) {
+    openDicePanel(); // เปิดหน้าต่างอัตโนมัติหากพับอยู่
     const modifier = parseInt(modifierStr) || 0;
     const mode = document.querySelector('input[name="roll_mode"]:checked').value;
     const r1 = Math.floor(Math.random() * 20) + 1; const r2 = Math.floor(Math.random() * 20) + 1;
@@ -662,16 +541,12 @@ function rollD20(name, modifierStr) {
         logEntry.dataset.copytext = `🎲 ทอยเต๋า: ${name.replace(/<[^>]*>?/gm, '')}\nหน้าเต๋า: ${diceShow} ${critPlain}\nModifier: ${modifier >= 0 ? '+'+modifier : modifier}\nTotal: ${total}`;
         logEntry.innerHTML = `<div class="log-header-row"><div style="font-weight:bold;">${name}${modeText}</div><button class="btn-copy-log" onclick="copyLogEntry(this)">📋</button></div><div style="font-size:0.85em; color:var(--text-muted);">เต๋า: ${diceShow} ${critText} <br> Mod: ${modifier >= 0 ? '+'+modifier : modifier}</div><div style="font-size: 1.4em; font-weight: bold; color: var(--bonus-color); margin-top: 5px; text-shadow: 1px 1px 2px #000;">Total: ${total}</div>`;
         document.getElementById('dice-log').prepend(logEntry);
-        
-        const dicePanel = document.getElementById('dice-panel');
-        if (dicePanel && dicePanel.classList.contains('collapsed')) {
-            togglePanel('dice-panel');
-        }
     });
 }
 
 function rollDamage(damageStr, wpnName) {
     if (damageStr === '-') return;
+    openDicePanel(); // เปิดหน้าต่างอัตโนมัติหากพับอยู่
     const match = damageStr.match(/(\d+)d(\d+)\s*([+-]\s*\d+)?/i);
     const logEntry = document.createElement('div'); logEntry.className = 'log-entry';
 
@@ -696,17 +571,18 @@ function rollDamage(damageStr, wpnName) {
         logEntry.dataset.copytext = `⚔️ ดาเมจ: ${wpnName}\nทอย ${count}d${sides}: [${rolls.join(', ')}]\nMod: ${mod >= 0 ? '+'+mod : mod}\nTotal Damage: ${total}`;
         logEntry.innerHTML = `<div class="log-header-row"><div style="font-weight:bold;">💥 ${wpnName} (Damage)</div><button class="btn-copy-log" onclick="copyLogEntry(this)">📋</button></div><div style="font-size:0.85em; color:var(--text-muted);">ทอย ${count}d${sides}: [${rolls.join(', ')}] <br> Mod: ${mod >= 0 ? '+'+mod : mod}</div><div style="font-size: 1.4em; font-weight: bold; color: var(--red-twd-light); margin-top: 5px; text-shadow: 1px 1px 2px #000;">Total Damage: ${total}</div>`;
         document.getElementById('dice-log').prepend(logEntry);
-        
-        const dicePanel = document.getElementById('dice-panel');
-        if (dicePanel && dicePanel.classList.contains('collapsed')) {
-            togglePanel('dice-panel');
-        }
     });
 }
 
-// ====================================================
-// 9. Event Listener ควบคุมทุกการกระทำ
-// ====================================================
+function logAction(title, message) {
+    openDicePanel(); // เปิดหน้าต่างอัตโนมัติ
+    const logEntry = document.createElement('div'); logEntry.className = 'log-entry';
+    logEntry.dataset.copytext = `${title}\n${message}`;
+    logEntry.innerHTML = `<div class="log-header-row"><div style="font-weight:bold; color:var(--bonus-color);">${title}</div><button class="btn-copy-log" onclick="copyLogEntry(this)">📋</button></div><div style="font-size: 0.9em; margin-top:5px;">${message}</div>`;
+    document.getElementById('dice-log').prepend(logEntry);
+}
+
+// ผูก Event เพิ่มเติม
 document.querySelectorAll('input, select, textarea').forEach(el => {
     el.addEventListener('input', (e) => {
         saveLocalData();
@@ -764,6 +640,6 @@ document.getElementById('role').addEventListener('change', (e) => {
 
 // เริ่มการทำงานครั้งแรก
 initWeapons();
-loadUIState(); // โหลดสถานะการย่อ/ขยายหน้าต่าง
+loadUIState(); 
 loadLocalData(); 
 updateCalculations();
