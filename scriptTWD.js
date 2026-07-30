@@ -141,25 +141,13 @@ function loadUIState() {
     } catch(e) {}
 }
 
-function closeDicePanel() {
-    document.getElementById('dice-panel').classList.add('hidden-panel');
-    saveUIState();
-}
-
+function closeDicePanel() { document.getElementById('dice-panel').classList.add('hidden-panel'); saveUIState(); }
 function showDicePanel() {
-    const panel = document.getElementById('dice-panel');
-    panel.classList.remove('hidden-panel');
-    panel.classList.remove('collapsed'); 
-    saveUIState();
+    const panel = document.getElementById('dice-panel'); panel.classList.remove('hidden-panel'); panel.classList.remove('collapsed'); saveUIState();
 }
-
 function openDicePanelAuto() {
-    const panel = document.getElementById('dice-panel');
-    panel.classList.remove('hidden-panel'); 
-    if (panel.classList.contains('collapsed')) {
-        panel.classList.remove('collapsed'); 
-    }
-    saveUIState();
+    const panel = document.getElementById('dice-panel'); panel.classList.remove('hidden-panel'); 
+    if (panel.classList.contains('collapsed')) { panel.classList.remove('collapsed'); } saveUIState();
 }
 
 // ==========================================
@@ -412,7 +400,7 @@ function toggleBGM() {
 }
 
 // ====================================================
-// 8. ระบบเสียงเต๋าและลูกเต๋า 3D (The iOS 16 GPU Killer Fix)
+// 8. 🛑 กราฟิกเต๋า และ ระบบทอยเต๋าแก้บั๊ก iOS
 // ====================================================
 let audioCtx = null; let audioUnlocked = false;
 function unlockAudio() {
@@ -442,80 +430,85 @@ function playDiceSound() {
 
 document.getElementById('dice-color-select').addEventListener('change', (e) => { document.documentElement.style.setProperty('--dice-hue', `${e.target.value}deg`); });
 
-function play3DDiceAnimation(rolls, finalIndex, callback) {
+// ฟังก์ชันสร้างรูปทรง SVG อัตโนมัติ (D4 - D20)
+function getDiceSvg(sides) {
+    if (sides == 4) return `<svg viewBox="0 0 100 100" class="dice-svg"><polygon points="50,10 10,85 90,85" fill="#d00000" stroke="#ff8888" stroke-width="2"/><polygon points="50,10 50,85 10,85" fill="#ff4d4d" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,10 90,85 50,85" fill="#cc0000" stroke="#ff8888" stroke-width="1.5"/></svg>`;
+    if (sides == 6) return `<svg viewBox="0 0 100 100" class="dice-svg"><polygon points="50,15 85,35 50,55 15,35" fill="#ff6666" stroke="#ff8888" stroke-width="1.5"/><polygon points="15,35 50,55 50,90 15,70" fill="#cc0000" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,55 85,35 85,70 50,90" fill="#990000" stroke="#ff8888" stroke-width="1.5"/></svg>`;
+    if (sides == 8) return `<svg viewBox="0 0 100 100" class="dice-svg"><polygon points="50,10 15,50 85,50" fill="#ff4d4d" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,10 50,50 15,50" fill="#ff6666" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,10 85,50 50,50" fill="#d00000" stroke="#ff8888" stroke-width="1.5"/><polygon points="15,50 50,90 85,50" fill="#cc0000" stroke="#ff8888" stroke-width="1.5"/><polygon points="15,50 50,90 50,50" fill="#990000" stroke="#ff8888" stroke-width="1.5"/><polygon points="85,50 50,90 50,50" fill="#7a0000" stroke="#ff8888" stroke-width="1.5"/></svg>`;
+    if (sides == 10) return `<svg viewBox="0 0 100 100" class="dice-svg"><polygon points="50,10 20,45 50,65 80,45" fill="#ff4d4d" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,10 20,45 50,65" fill="#ff6666" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,10 80,45 50,65" fill="#d00000" stroke="#ff8888" stroke-width="1.5"/><polygon points="20,45 50,90 50,65" fill="#cc0000" stroke="#ff8888" stroke-width="1.5"/><polygon points="80,45 50,90 50,65" fill="#990000" stroke="#ff8888" stroke-width="1.5"/></svg>`;
+    if (sides == 12) return `<svg viewBox="0 0 100 100" class="dice-svg"><polygon points="50,25 25,40 35,70 65,70 75,40" fill="#ff4d4d" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,25 25,40 10,20 50,5" fill="#ff6666" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,25 75,40 90,20 50,5" fill="#d00000" stroke="#ff8888" stroke-width="1.5"/><polygon points="25,40 35,70 15,90 5,60 10,20" fill="#cc0000" stroke="#ff8888" stroke-width="1.5"/><polygon points="75,40 65,70 85,90 95,60 90,20" fill="#990000" stroke="#ff8888" stroke-width="1.5"/><polygon points="35,70 65,70 85,90 50,100 15,90" fill="#7a0000" stroke="#ff8888" stroke-width="1.5"/></svg>`;
+    // Default D20
+    return `<svg viewBox="0 0 100 100" class="dice-svg"><polygon points="50,20 15,70 85,70" fill="#b22222" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,0 0,25 50,20" fill="#ff6666" stroke="#ff8888" stroke-width="1.5"/><polygon points="50,0 100,25 50,20" fill="#d00000" stroke="#ff8888" stroke-width="1.5"/><polygon points="0,25 15,70 50,20" fill="#ff4d4d" stroke="#ff8888" stroke-width="1.5"/><polygon points="100,25 85,70 50,20" fill="#cc0000" stroke="#ff8888" stroke-width="1.5"/><polygon points="0,25 0,75 15,70" fill="#e60000" stroke="#ff8888" stroke-width="1.5"/><polygon points="100,25 100,75 85,70" fill="#7a0000" stroke="#ff8888" stroke-width="1.5"/><polygon points="0,75 50,100 15,70" fill="#990000" stroke="#ff8888" stroke-width="1.5"/><polygon points="100,75 50,100 85,70" fill="#550000" stroke="#ff8888" stroke-width="1.5"/><polygon points="15,70 50,100 85,70" fill="#8b0000" stroke="#ff8888" stroke-width="1.5"/></svg>`;
+}
+
+// ฟังก์ชันหลัก สร้างอนิเมชันลูกเต๋าและทำลายทิ้งเพื่อแก้บั๊ก iOS
+function play3DDiceAnimation(rolls, sides, finalIndex, callback) {
     playDiceSound(); 
     const overlay = document.getElementById('dice-3d-overlay');
-    const w1 = document.getElementById('dice-wrapper-1'); 
-    const r1 = document.getElementById('dice-result-1');
-    const w2 = document.getElementById('dice-wrapper-2'); 
-    const r2 = document.getElementById('dice-result-2');
+    const container = document.getElementById('dice-container');
 
-    // 🔴 1. เปิดระบบทุกอย่างกลับมาทำงาน (Reset State)
-    overlay.style.display = 'flex'; // บังคับกางจอใหม่
+    // 🛑 เคลียร์ลูกเต๋าเก่าทิ้ง 100% ป้องกันบั๊ก iOS ค้าง
+    container.innerHTML = '';
+    
+    // จำกัดให้แสดงสูงสุดแค่ 2 ลูกบนจอเพื่อความสวยงาม
+    let visualRolls = rolls.slice(0, 2);
+
+    // สร้างลูกเต๋าใหม่แบบสดๆ
+    visualRolls.forEach((roll, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'dice-3d-wrapper';
+        wrapper.id = `dice-wrapper-${idx}`;
+        wrapper.innerHTML = `
+            ${getDiceSvg(sides)}
+            <div class="dice-result-text" id="dice-result-${idx}">${roll}</div>
+        `;
+        container.appendChild(wrapper);
+    });
+
+    overlay.style.display = 'flex';
     overlay.classList.remove('hidden-overlay');
-    
-    w1.style.display = 'block';
-    w1.style.transformStyle = 'preserve-3d'; // คืนค่า 3D ให้ WebKit
-    w1.style.animation = 'none'; r1.style.animation = 'none'; r1.style.opacity = '0'; r1.className = 'dice-result-text'; r1.textContent = rolls[0];
 
-    if (rolls.length > 1) {
-        w2.style.display = 'block'; 
-        w2.style.transformStyle = 'preserve-3d';
-        w2.style.animation = 'none'; r2.style.animation = 'none'; r2.style.opacity = '0'; r2.className = 'dice-result-text'; r2.textContent = rolls[1];
-        if (finalIndex === 0) { r1.classList.add('adv-highlight'); r2.classList.add('dis-highlight'); } 
-        else { r2.classList.add('adv-highlight'); r1.classList.add('dis-highlight'); }
-    } else { 
-        w2.style.display = 'none'; 
-    }
+    // บังคับให้เบราว์เซอร์รีเฟรช 
+    void overlay.offsetWidth;
 
-    void overlay.offsetWidth; // บังคับให้เบราว์เซอร์วาดหน้าจอใหม่ทันที
-    
-    // เริ่มอนิเมชัน
-    w1.style.animation = 'tumbling 1.2s cubic-bezier(0.1, 0.8, 0.2, 1) forwards';
-    if (rolls.length > 1) w2.style.animation = 'tumbling-delay 1.3s cubic-bezier(0.1, 0.8, 0.2, 1) forwards';
+    // เล่นอนิเมชัน
+    visualRolls.forEach((roll, idx) => {
+        const w = document.getElementById(`dice-wrapper-${idx}`);
+        const r = document.getElementById(`dice-result-${idx}`);
 
+        // เน้นสีสำหรับ Advantage / Disadvantage (เฉพาะเต๋า 20 หน้า)
+        if (visualRolls.length > 1 && sides === 20) {
+            if (finalIndex === idx) r.classList.add('adv-highlight');
+            else r.classList.add('dis-highlight');
+        }
+
+        w.style.animation = `tumbling ${1.2 + (idx * 0.1)}s cubic-bezier(0.1, 0.8, 0.2, 1) forwards`;
+        setTimeout(() => {
+            r.style.animation = 'popNumber 0.4s ease-out forwards';
+            if (idx > 0) setTimeout(() => playDiceSound(), 200); // เล่นเสียงลูกที่สอง
+        }, 1100 + (idx * 100));
+    });
+
+    // 🔴 ฟังก์ชันทุบทำลาย (The iOS GPU Killer)
     let animationDone = false;
-
-    // 🔴 2. ฟังก์ชัน "ทำลายทิ้ง" (The iOS GPU Killer)
     const hideOverlay = () => {
         if(animationDone) return;
         animationDone = true;
         
-        // ทุบทิ้ง Property ทุกตัวที่อาจจะทำให้ GPU ค้าง
-        w1.style.animation = 'none'; w1.style.transform = 'none';
-        w1.style.transformStyle = 'flat'; // ปิด 3D ทันที
-        w1.style.display = 'none'; // ซ่อน Wrapper ทิ้ง
-        
-        w2.style.animation = 'none'; w2.style.transform = 'none';
-        w2.style.transformStyle = 'flat';
-        w2.style.display = 'none';
-
-        r1.style.animation = 'none'; r1.style.opacity = '0';
-        r2.style.animation = 'none'; r2.style.opacity = '0';
-        
-        // ซ่อน Overlay 
+        // ลบ DOM ลูกเต๋าทิ้งทั้งหมดเพื่อให้แรมว่าง
+        container.innerHTML = ''; 
         overlay.style.display = 'none';
         overlay.classList.add('hidden-overlay');
-
-        // บังคับเคลียร์ RAM โดยการ Reflow หน้าจอ
-        void document.body.offsetHeight;
 
         if(callback) callback();
     };
 
-    // 🛡️ แตะหน้าจอเพื่อบังคับปิดทันที กรณีเครื่องค้าง!
+    // แตะที่จอเพื่อบังคับปิดทันที 
     overlay.onclick = hideOverlay;
     overlay.ontouchstart = hideOverlay; 
 
-    setTimeout(() => {
-        r1.style.animation = 'popNumber 0.4s ease-out forwards';
-        if (rolls.length > 1) { r2.style.animation = 'popNumber 0.4s ease-out forwards'; setTimeout(() => { playDiceSound(); }, 200); }
-        // หน่วงเวลาดูผล แล้วปิด
-        setTimeout(hideOverlay, 1500);
-    }, 1100);
-
-    // Failsafe บังคับปิดเมื่อเกิน 3 วินาที เผื่อสคริปต์ติดบั๊ก
-    setTimeout(hideOverlay, 3000);
+    // หน่วงเวลาปิดหน้าจอ (รออนิเมชันลูกสุดท้ายจบ)
+    setTimeout(hideOverlay, 1500 + (visualRolls.length * 100));
 }
 
 // ====================================================
@@ -632,7 +625,8 @@ function rollD20(name, modifierStr) {
     if (finalRoll === 1) { critText = '<span class="text-danger">(Critical Failure!)</span>'; critPlain = '(Critical Failure!)'; }
 
     const total = finalRoll + modifier;
-    play3DDiceAnimation(rolls, finalIndex, () => {
+    // ทอยเต๋า 20 หน้า (D20)
+    play3DDiceAnimation(rolls, 20, finalIndex, () => {
         const logEntry = document.createElement('div'); logEntry.className = `log-entry`;
         logEntry.dataset.copytext = `🎲 ทอยเต๋า: ${name.replace(/<[^>]*>?/gm, '')}\nหน้าเต๋า: ${diceShow} ${critPlain}\nModifier: ${modifier >= 0 ? '+'+modifier : modifier}\nTotal: ${total}`;
         logEntry.innerHTML = `<div class="log-header-row"><div style="font-weight:bold;">${name}${modeText}</div><button class="btn-copy-log" onclick="copyLogEntry(this)">📋</button></div><div style="font-size:0.85em; color:var(--text-muted);">เต๋า: ${diceShow} ${critText} <br> Mod: ${modifier >= 0 ? '+'+modifier : modifier}</div><div style="font-size: 1.4em; font-weight: bold; color: var(--bonus-color); margin-top: 5px; text-shadow: 1px 1px 2px #000;">Total: ${total}</div>`;
@@ -646,6 +640,7 @@ function rollDamage(damageStr, wpnName) {
     const match = damageStr.match(/(\d+)d(\d+)\s*([+-]\s*\d+)?/i);
     const logEntry = document.createElement('div'); logEntry.className = 'log-entry';
 
+    // กรณีมือเปล่า (เช่น Damage = 1 ไม่มีทอยเต๋า)
     if (!match) {
         const matchFlat = damageStr.match(/([+-]?\d+)\s*([+-]\s*\d+)?/);
         if(matchFlat) {
@@ -658,12 +653,14 @@ function rollDamage(damageStr, wpnName) {
         return;
     }
 
+    // กรณีทอยเต๋าอาวุธ
     const count = parseInt(match[1]), sides = parseInt(match[2]), mod = match[3] ? parseInt(match[3].replace(/\s/g,'')) : 0;
     let totalDice = 0, rolls = [];
     for(let i=0; i<count; i++) { let r = Math.floor(Math.random() * sides) + 1; rolls.push(r); totalDice += r; }
     const total = totalDice + mod;
 
-    play3DDiceAnimation([rolls[0]], 0, () => {
+    // เล่นอนิเมชันลูกเต๋าแบบ Dynamic ตามจำนวนด้านของอาวุธ (D4, D6, D8...)
+    play3DDiceAnimation(rolls, sides, 0, () => {
         logEntry.dataset.copytext = `⚔️ ดาเมจ: ${wpnName}\nทอย ${count}d${sides}: [${rolls.join(', ')}]\nMod: ${mod >= 0 ? '+'+mod : mod}\nTotal Damage: ${total}`;
         logEntry.innerHTML = `<div class="log-header-row"><div style="font-weight:bold;">💥 ${wpnName} (Damage)</div><button class="btn-copy-log" onclick="copyLogEntry(this)">📋</button></div><div style="font-size:0.85em; color:var(--text-muted);">ทอย ${count}d${sides}: [${rolls.join(', ')}] <br> Mod: ${mod >= 0 ? '+'+mod : mod}</div><div style="font-size: 1.4em; font-weight: bold; color: var(--red-twd-light); margin-top: 5px; text-shadow: 1px 1px 2px #000;">Total Damage: ${total}</div>`;
         document.getElementById('dice-log').prepend(logEntry);
