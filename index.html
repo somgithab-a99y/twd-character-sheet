@@ -66,7 +66,6 @@
                 </div>
             </div>
             
-            <!-- เพิ่มปุ่ม เปิดหน้าต่างเต๋า ตรงนี้ -->
             <div class="header-actions">
                 <button class="btn-action" onclick="showDicePanel()" style="background: linear-gradient(145deg, #8b0000, #4a0000);">🎲 เปิดหน้าต่างเต๋า</button>
                 <button class="btn-action" onclick="toggleAllPanels()" style="background: linear-gradient(145deg, #444, #222);">↕️ ย่อ/ขยาย ทั้งหมด</button>
@@ -87,7 +86,6 @@
                     <input type="text" id="custom-img-url" placeholder="🔗 ใส่ลิงก์รูปประจำตัว (ถ้ามี)...">
                 </div>
 
-                <!-- Panel: Stats -->
                 <div class="panel-3d collapsible-panel" id="panel-stats">
                     <div class="panel-header" onclick="togglePanel('panel-stats')">
                         <h3>📊 สเตตัสหลัก (Core Stats)</h3>
@@ -136,7 +134,6 @@
 
             <!-- Middle Column: Combat & Skills -->
             <section class="combat-skills-col">
-                <!-- Panel: Combat -->
                 <div class="panel-3d collapsible-panel" id="panel-combat">
                     <div class="panel-header" onclick="togglePanel('panel-combat')">
                         <h3>⚔️ สถานะการต่อสู้ (Combat Status)</h3>
@@ -202,7 +199,6 @@
                     </div>
                 </div>
 
-                <!-- Panel: Skills -->
                 <div class="panel-3d collapsible-panel" id="panel-skills">
                     <div class="panel-header" onclick="togglePanel('panel-skills')">
                         <h3>🎯 ทักษะ (Skills & Saves)</h3>
@@ -221,7 +217,6 @@
 
             <!-- Right Column: Attacks & Features -->
             <section class="features-col">
-                <!-- Panel: Traits -->
                 <div class="panel-3d collapsible-panel" id="panel-traits">
                     <div class="panel-header" onclick="togglePanel('panel-traits')">
                         <h3>💡 ข้อมูลตัวละคร (Traits)</h3>
@@ -234,7 +229,6 @@
                     </div>
                 </div>
 
-                <!-- Panel: Armor -->
                 <div class="panel-3d collapsible-panel" id="panel-armor">
                     <div class="panel-header" onclick="togglePanel('panel-armor')">
                         <h3>👕 เครื่องแต่งกาย (Armor)</h3>
@@ -260,7 +254,6 @@
                     </div>
                 </div>
 
-                <!-- Panel: Attacks -->
                 <div class="panel-3d collapsible-panel" id="panel-attacks">
                     <div class="panel-header" onclick="togglePanel('panel-attacks')">
                         <h3>⚔️ อาวุธและการโจมตี (Attacks)</h3>
@@ -272,7 +265,6 @@
                             <span title="คลิกเพื่อทอยโจมตี">ATK</span>
                             <span title="คลิกเพื่อทอยดาเมจ">DMG</span>
                         </div>
-                        
                         <div class="attack-row">
                             <div class="weapon-input-group">
                                 <input type="text" id="wpn-name-1" placeholder="ชื่ออาวุธ...">
@@ -303,7 +295,6 @@
                     </div>
                 </div>
 
-                <!-- Panel: Ammo -->
                 <div class="panel-3d collapsible-panel" id="panel-ammo">
                     <div class="panel-header" onclick="togglePanel('panel-ammo')">
                         <h3>🔫 กระสุน (Ammunition)</h3>
@@ -333,7 +324,6 @@
                     </div>
                 </div>
 
-                <!-- Panel: Inventory -->
                 <div class="panel-3d collapsible-panel" id="panel-inventory">
                     <div class="panel-header" onclick="togglePanel('panel-inventory')">
                         <h3>🎒 ช่องเก็บของ & ยุทธวิธี</h3>
@@ -348,20 +338,18 @@
         </main>
     </div>
 
-    <!-- Floating Dice Roller Panel (ลอยและย่อขยายได้) -->
-    <!-- ปิดทิ้งได้ด้วยปุ่ม ❌ -->
+    <!-- Floating Dice Roller Panel -->
     <div class="dice-roller-panel panel-3d collapsed" id="dice-panel">
         <div class="roller-header" id="dice-panel-header">
-            <!-- ส่วนที่แสดงเมื่อหน้าต่างกางออก -->
             <div class="header-content" id="dice-header-content">
                 <h3 id="dice-panel-title">🎲 ระบบทอยเต๋า</h3>
                 <div style="display: flex; gap: 5px;">
                     <button id="btn-clear-log" class="btn-action btn-small" onclick="event.stopPropagation(); clearDiceLog();">ล้าง</button>
-                    <!-- ปุ่มกากบาท สำหรับซ่อนหน้าต่างแบบหายไปเลย -->
+                    <!-- ปุ่ม ❌ ปิดหน้าต่างหายไปเลย -->
                     <button class="btn-action btn-small btn-close-panel" onclick="event.stopPropagation(); closeDicePanel();" title="ปิดหน้าต่าง">❌</button>
                 </div>
             </div>
-            <!-- ส่วนที่แสดงเมื่อหน้าต่างพับ (ไอคอนสี่เหลี่ยมลูกเต๋า) -->
+            <!-- ไอคอนเวลาพับ -->
             <div class="collapsed-icon" id="dice-collapsed-icon">🎲</div>
         </div>
         
@@ -395,7 +383,7 @@
                 <div class="text-muted" style="text-align:center; margin-top:10px;">คลิกที่ค่าสถานะหรืออาวุธเพื่อทอยเต๋า</div>
             </div>
         </div>
-        <!-- ปุ่มดึงย่อขยาย มุมขวาล่าง -->
+        <!-- ปุ่มดึงขยายหน้าต่าง (จะซ่อนอัตโนมัติบนมือถือ) -->
         <div class="resize-handle" id="dice-resize-handle"></div>
     </div>
 
@@ -435,7 +423,6 @@
         </div>
     </div>
 
-    <!-- YouTube BGM Container -->
     <div id="yt-bgm-container"></div>
     <script src="scriptTWD.js"></script>
 </body>
