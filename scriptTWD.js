@@ -168,7 +168,7 @@ skillsData.forEach((skill, index) => {
 });
 
 // ==========================================
-// 5. ระบบคำนวณสเตตัส & สีเลือด & การ์ดรูปภาพ
+// 5. 🛑 ระบบเปลี่ยนรูปภาพตัวละคร (แก้ไขบั๊กโหลดซ้ำ)
 // ==========================================
 function updateHealthVisuals() {
     const current = parseInt(document.getElementById('current-hp').value) || 0;
@@ -180,6 +180,7 @@ function updateHealthVisuals() {
 }
 document.getElementById('current-hp').addEventListener('input', updateHealthVisuals); document.getElementById('max-hp').addEventListener('input', updateHealthVisuals);
 
+// ฟังก์ชันดึงรูปภาพ ถูกแยกออกมาจากฟังก์ชันสเตตัส เพื่อไม่ให้โหลดพร่ำเพรื่อ!
 function updateCharacterCard() {
     const typeObj = document.getElementById('survivor-type'); const roleObj = document.getElementById('role'); const bgObj = document.getElementById('background');
     const typeText = typeObj.value !== 'none' ? typeObj.options[typeObj.selectedIndex].text.split(' ')[0] : 'ผู้รอดชีวิต';
@@ -187,17 +188,36 @@ function updateCharacterCard() {
     const bgText = bgObj.value !== 'none' ? bgObj.options[bgObj.selectedIndex].text.split(' ')[0] : 'ไร้ภูมิหลัง';
     document.getElementById('char-combo-title').textContent = `${typeText} • ${roleText} • ${bgText}`;
 
-    const customUrl = document.getElementById('custom-img-url').value.trim(); const imgEl = document.getElementById('char-portrait');
-    if (customUrl) { imgEl.src = customUrl; } 
+    const customUrl = document.getElementById('custom-img-url').value.trim(); 
+    const imgEl = document.getElementById('char-portrait');
+
+    if (customUrl) { 
+        if(imgEl.dataset.currentUrl !== customUrl) {
+            imgEl.src = customUrl; 
+            imgEl.dataset.currentUrl = customUrl;
+        }
+    } 
     else {
-        if (typeObj.value === 'none' && roleObj.value === 'none' && bgObj.value === 'none') { imgEl.src = "https://placehold.co/300x400/1a1a1a/ffd700?text=Select+Survivor"; return; }
+        if (typeObj.value === 'none' && roleObj.value === 'none' && bgObj.value === 'none') { 
+            const defaultUrl = "https://placehold.co/300x400/1a1a1a/ffd700?text=Select+Survivor";
+            if(imgEl.dataset.currentUrl !== defaultUrl) {
+                imgEl.src = defaultUrl;
+                imgEl.dataset.currentUrl = defaultUrl;
+            }
+            return; 
+        }
         const prompt = `A portrait of a post-apocalyptic survivor in The Walking Dead, ${typeObj.value} type, ${roleObj.value} role, ${bgObj.value} background, gritty dark comic style, highly detailed`;
         const encodedPrompt = encodeURIComponent(prompt); const seedString = typeObj.value + roleObj.value + bgObj.value;
         let hash = 0; for (let i = 0; i < seedString.length; i++) hash = Math.imul(31, hash) + seedString.charCodeAt(i) | 0;
-        imgEl.src = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=300&height=400&nologo=true&seed=${Math.abs(hash)}`;
+        
+        const newAiUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=300&height=400&nologo=true&seed=${Math.abs(hash)}`;
+        if(imgEl.dataset.currentUrl !== newAiUrl) {
+            imgEl.src = newAiUrl;
+            imgEl.dataset.currentUrl = newAiUrl;
+        }
     }
 }
-document.getElementById('custom-img-url').addEventListener('input', updateCharacterCard);
+document.getElementById('custom-img-url').addEventListener('change', updateCharacterCard); // เปลี่ยนจาก 'input' เป็น 'change' เพื่อไม่ให้สแปมการโหลด
 
 function updateCalculations() {
     const level = parseInt(document.getElementById('level').value) || 1;
@@ -256,7 +276,7 @@ function updateCalculations() {
     // 💥 ซ่อมแซมระบบผูกฟังก์ชันปุ่มโจมตี ATK / DMG
     [1, 2, 3].forEach(slotId => {
         const wpnKey = document.getElementById(`wpn-select-${slotId}`).value; 
-        const wpn = weaponData[wpnKey] || weaponData['none']; // ดักบั๊กกันแตก
+        const wpn = weaponData[wpnKey] || weaponData['none']; 
         const customName = document.getElementById(`wpn-name-${slotId}`).value.trim();
         const displayWpnName = customName ? `${customName} (${wpn.name})` : wpn.name;
 
@@ -283,11 +303,12 @@ function updateCalculations() {
         
         document.getElementById(`wpn-prop-${slotId}`).textContent = wpn.props;
     });
-    updateHealthVisuals(); updateCharacterCard();
+    updateHealthVisuals(); 
+    // เอา updateCharacterCard() ออกจากตรงนี้ เพื่อหยุดการโหลดซ้ำ!
 }
 
 // ====================================================
-// 6. ระบบต่อสู้, พักผ่อน และ กระสุน (กู้คืนมาแล้ว)
+// 6. ระบบต่อสู้, พักผ่อน และ กระสุน
 // ====================================================
 function adjAmmo(type, amount) {
     const input = document.getElementById(`ammo-${type}`);
@@ -376,6 +397,7 @@ function loadLocalData() {
             proficiencies.clear();
             skillsData.forEach((skill, index) => { if (document.getElementById(`skill-${index}`).checked) proficiencies.add(index); });
             updateCalculations();
+            updateCharacterCard(); // โหลดรูปแค่ครั้งแรกตอนเข้าเว็บ
         }
     } catch (e) {}
 }
@@ -759,17 +781,25 @@ function logAction(title, message) {
     document.getElementById('dice-log').prepend(logEntry);
 }
 
-// ผูก Event เพิ่มเติม
+// ผูก Event ให้ทำงานเมื่อแก้ไขข้อมูล
 document.querySelectorAll('input, select, textarea').forEach(el => {
-    el.addEventListener('input', (e) => {
-        saveLocalData();
-        if (e.target.id !== 'webapp-url' && e.target.id !== 'bgm-url' && e.target.id !== 'custom-img-url') { autoSync(); }
-    });
+    // ใช้ event change สำหรับ select/checkbox และ blur/change สำหรับ input text เพื่อลดการทำงานซ้ำซ้อน
+    if (el.type === 'text' || el.type === 'number' || el.tagName === 'TEXTAREA') {
+        el.addEventListener('blur', (e) => {
+            saveLocalData();
+            if (e.target.id !== 'webapp-url' && e.target.id !== 'bgm-url' && e.target.id !== 'custom-img-url') { autoSync(); }
+        });
+    } else {
+        el.addEventListener('change', (e) => {
+            saveLocalData();
+            if (e.target.id !== 'webapp-url' && e.target.id !== 'bgm-url' && e.target.id !== 'custom-img-url') { autoSync(); }
+        });
+    }
 });
 
-abilities.forEach(stat => { document.getElementById(`${stat}-score`).addEventListener('input', updateCalculations); });
+abilities.forEach(stat => { document.getElementById(`${stat}-score`).addEventListener('blur', updateCalculations); });
 document.getElementById('show-all-skills').addEventListener('change', updateCalculations);
-document.getElementById('level').addEventListener('input', updateCalculations);
+document.getElementById('level').addEventListener('blur', updateCalculations);
 document.getElementById('armor-select').addEventListener('change', updateCalculations);
 document.getElementById('shield-check').addEventListener('change', updateCalculations);
 
@@ -779,6 +809,7 @@ document.getElementById('survivor-type').addEventListener('change', (e) => {
     currentRace = e.target.value;
     if (currentRace === 'tracker' && percIndex !== -1) { proficiencies.add(percIndex); document.getElementById(`skill-${percIndex}`).checked = true; }
     updateCalculations();
+    updateCharacterCard(); // โหลดรูปเมื่อเปลี่ยนเผ่าพันธุ์
 });
 
 document.getElementById('background').addEventListener('change', (e) => {
@@ -794,6 +825,7 @@ document.getElementById('background').addEventListener('change', (e) => {
         });
     }
     updateCalculations();
+    updateCharacterCard(); // โหลดรูปเมื่อเปลี่ยนภูมิหลัง
 });
 
 document.getElementById('role').addEventListener('change', (e) => {
@@ -811,6 +843,7 @@ document.getElementById('role').addEventListener('change', (e) => {
         document.getElementById('show-all-skills').checked = true;
     }
     updateCalculations();
+    updateCharacterCard(); // โหลดรูปเมื่อเปลี่ยนบทบาท
 });
 
 // เริ่มการทำงานครั้งแรก
